@@ -1,47 +1,35 @@
-var InterestRateTable = require ('../models/InterestRateModel');
+const InterestRateService = require('../services/InterestRateService')
+const _ = require('lodash')
 
-var listInterestRate= async res =>{
-    try{
-        res.json(await InterestRateTable.find())
-    }
-    catch (err) { res.send(err) }
+const apiGetListInteresRate = async (req, res) => {
+    console.log('apiGetListInteresRate==========>')
+    res.sendStatus(200)
 }
 
-module.exports= app=>{
-    app.get("/api/getlistInterestRate",function(req,res){
-        listInterestRate(res);
-    });
-
-    app.get("api/getInterestRate/:id",async(req,res)=>{
-        try{
-            res.json(await InterestRateTable.findById({_id:req.params.id}))
-        }
-        catch(err){console.log(err+'')}
-    });
-
-
-// Model.find({ term: body.term, effectiveDate: body.effectiveDate})
-
-    app.post("/api/postInterestRate",async(req,res)=>{
-        
-        var interest = {
+const apiCreateInterestRate = async (req, res) => {
+        const interest = {
             InterestRateTableCode: req.body.InterestRateTableCode,
             InterestRateTableName: req.body.InterestRateTableName,
             term: req.body.term,
             InterestRate: req.body.InterestRate,
             effectiveDate: new Date(req.body.effectiveDate),
-        } 
-        if(res.json(await InterestRateTable.find({
-            term:req.body.term,
-            effectiveDate: req.body.effectiveDate}))){
-            return res.status(500).send("Ky han da ton tai");
         }
-        else 
-        try{
-            await InterestRateTable.create(interest)
-            console.log(interest);
-            listInterestRate(res)
+        if (_.isNumber(req.body.InterestRate) === false) {
+            res.sendStatus(400).send('InterestRate is not a number')
         }
-        catch(err){console.log(err+"")}
-    });
+        const term = req.body.term
+        const effectiveDate = req.body.effectiveDate
+        const listInterestRate = await InterestRateService.getListInterestRateByTermAndEffective(term, effectiveDate)
+        console.log('listInterestRate', listInterestRate)
+        if (listInterestRate.length > 0) {
+            return res.sendStatus(400).send('bản ghi đã tồn tại')
+        }
+        const dataInsert = await InterestRateService.insertInterestRate(interest)
+        res.send(dataInsert)
+    };
+
+
+module.exports = {
+    apiCreateInterestRate,
+    apiGetListInteresRate
 }
