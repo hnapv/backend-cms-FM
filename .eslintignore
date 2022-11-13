@@ -1,0 +1,7 @@
+node_modules
+bin
+
+*\.min\.js
+adsbypubfuture.js
+adsbypubfutureIframe.js
+wrapperadsbypubfuture.js
