@@ -2,10 +2,11 @@ const express = require('express')
 
 const router = express.Router()
 
-const InterestRateTableController = require('../controllers/InterestRateTableController')
+const InterestRateController = require('../controllers/InterestRateController')
 
-router.post('/api/postInterestRate', InterestRateTableController.apiCreateInterestRate)
-router.get('/api/listInteresRate', InterestRateTableController.apiGetListInteresRate)
+router.post('/api/createInterestRate', InterestRateController.apiCreateInterestRate)
+router.get('/api/listInterestRate', InterestRateController.apiGetListInterestRate)
+router.get('/api/getDetailInterestRate/:InterestRateTableCode',InterestRateController.apiGetInterestRateTableCode)
 
 
 module.exports = router

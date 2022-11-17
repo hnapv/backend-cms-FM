@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var Schema= mongoose.Schema;
-var infoCusSchema= new Schema({
+var CustomerInfoSchema= new Schema({
     fullName: String,
     id: String,
     dateOfIssue: Date,
@@ -16,6 +16,6 @@ var infoCusSchema= new Schema({
     address: String    
 });
 
-var infoCustomers = mongoose.model("infoCustomers",infoCusSchema);
+var CustomerInfomation = mongoose.model("CustomerInfomation",CustomerInfoSchema);
 
-module.exports = infoCustomers;
+module.exports = CustomerInfomation;
