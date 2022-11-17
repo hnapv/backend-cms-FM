@@ -14,7 +14,7 @@ var CustomerInfoSchema= new Schema({
     email: String,
     phoneNumber: Number,
     address: String    
-});
+}, {timestamps: true});
 
 var CustomerInfomation = mongoose.model("CustomerInfomation",CustomerInfoSchema);
 

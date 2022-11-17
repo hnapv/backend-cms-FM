@@ -6,6 +6,7 @@ const apiGetListCustomerInfo = async(req,res)=>{
 };
 
 const apiCreateCustomerInfo = async(req,res)=>{
+    
     try{
         const CustomerInfo = {
             fullName: req.body.fullName,
@@ -19,10 +20,14 @@ const apiCreateCustomerInfo = async(req,res)=>{
             address: req.body.address
         }
         console.log(CustomerInfo)
-    
+  // check truyen gia tri thieu
+        if(req.body.id==undefined|req.body.id==""){
+            console.log(req.body.id)
+            return res.status(400).send('nhap thieu')
+        }
+        
         const id = req.body.id
         const listCustomerById = await CustomerInfoService.GetListCustomerInfoById(id);
-        console.log('listCustomerById=>>',listCustomerById)
         if(listCustomerById.length>0){
             return res.status(400).send("ID da ton tai")
         }
