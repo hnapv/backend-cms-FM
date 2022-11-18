@@ -1,22 +1,18 @@
 const UserModel = require("../models/UserModel")
 
-const GetUserByUserName = async (UserName)=>{
-    const listUser = await UserModel.find({
-        UserName: UserName
+const GetUserByUserName = async (username)=>{
+    const listUser = await UserModel.findOne({
+        username: username
     })
     return listUser
 }
 
-const CreateUser = async()=>{
-    const User ={
-        FullName: req.body.FullName,
-        UserName: req.body.UserName,
-        Password: req.body.Password,
-        Email: req.body.Email,
-    }
-    const createdata = await UserModel.create(User)
+const CreateUser = async(data)=>{
+    const createdata = await UserModel.create(data)
     return createdata
 }
+
+
 
 // const PutUser = async()=>{
 //     const 
