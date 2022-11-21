@@ -7,49 +7,50 @@ const apiGetListCustomerInfo = async(req,res)=>{
 
 const apiCreateCustomerInfo = async(req,res)=>{
     
-    try{
+    // try{
         const CustomerInfo = {
-            fullName: req.body.fullName,
-            id: req.body.id,
-            dateOfIssue: new Date(req.body.dateOfIssue),
-            placeOfIssue: req.body.placeOfIssue,
-            gender: req.body.gender,
-            birthDay: new Date(req.body.birthDay),
-            email: req.body.email,
-            phoneNumber: req.body.phoneNumber,
-            address: req.body.address
+            CustomerName: req.body.CustomerName,
+            CustomerID: req.body.CustomerID,
+            DateOfIssue: new Date(req.body.DateOfIssue),
+            PlaceOfIssue: req.body.PlaceOfIssue,
+            Gender: req.body.Gender,
+            BirthDay: new Date(req.body.BirthDay),
+            Email: req.body.Email,
+            PhoneNumber: req.body.PhoneNumber,
+            Address: req.body.Address
         }
         console.log(CustomerInfo)
   // check truyen gia tri thieu
-        if(req.body.id==undefined|req.body.id==""){
-            console.log(req.body.id)
-            return res.status(400).send('nhap thieu')
+        if(req.body.CustomerID==undefined|req.body.CustomerID==""){
+            console.log(req.body.CustomerID)
+            return res.status(400).send('Chua nhap CustomerID')
         }
         
-        const id = req.body.id
-        const listCustomerById = await CustomerInfoService.GetListCustomerInfoById(id);
-        if(listCustomerById.length>0){
-            return res.status(400).send("ID da ton tai")
+        const CustomerID = req.body.CustomerID
+        const listCustomerByCustomerID = await CustomerInfoService.GetListCustomerInfoByCustomerID(CustomerID);
+        if(listCustomerByCustomerID.length>0){
+            return res.status(400).send("CustomerID da ton tai")
         }
+        console.log("id nafy",listCustomerByCustomerID)
         const createCustomerInfo = await CustomerInfoService.CreateCustomerInfo(CustomerInfo);
         res.send(createCustomerInfo);
-    }
-    catch(err){res.status(500).send("Ban ghi loi, chua tao thanh cong")}
+    // }
+    // catch(err){res.status(500).send("Ban ghi loi, chua tao thanh cong")}
 };
 
 const apiPutCustomerInfo = async(req,res)=>{
 
     const cusInfo= {
 
-        fullName: req.body.fullName,
+        CustomerName: req.body.CustomerName,
         id: req.body.id,
-        dateOfIssue: new Date(req.body.dateOfIssue),
-        placeOfIssue: req.body.placeOfIssue,
-        gender: req.body.gender,
-        birthDay: new Date(req.body.birthDay),
-        email: req.body.email,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address 
+        DateOfIssue: new Date(req.body.DateOfIssue),
+        PlaceOfIssue: req.body.PlaceOfIssue,
+        Gender: req.body.Gender,
+        BirthDay: new Date(req.body.BirthDay),
+        Email: req.body.Email,
+        PhoneNumber: req.body.PhoneNumber,
+        Address: req.body.Address 
     }
 
     console.log("cus la",cusInfo)
@@ -87,12 +88,12 @@ module.exports = {
 //     app.post("/api/postInfoCustomer", async (req, res) => {
 //         try {
 //             var infoCus = {
-//                 fullName: req.body.fullName,
+//                 CustomerName: req.body.CustomerName,
 //                 id: req.body.id,
-//                 dateOfIssue: new Date(req.body.dateOfIssue),
+//                 DateOfIssue: new Date(req.body.dateOfIssue),
 //                 placeOfIssue: req.body.placeOfIssue,
 //                 gender: req.body.gender,
-//                 birthDay: new Date(req.body.birthDay),
+//                 BirthDay: new Date(req.body.birthDay),
 //                 email: req.body.email,
 //                 phoneNumber: req.body.phoneNumber,
 //                 address: req.body.address
@@ -112,7 +113,7 @@ module.exports = {
 //             await infoCustomers.updateOne({
 //                 _id: req.body._id
 //             }, {
-//                 fullName: req.body.fullName,
+//                 CustomerName: req.body.CustomerName,
 //                 id: req.body.id,
 //                 dateOfIssue: new Date(req.body.dateOfIssue),
 //                 placeOfIssue: req.body.placeOfIssue,

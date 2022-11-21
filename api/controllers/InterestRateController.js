@@ -18,27 +18,27 @@ const apiCreateInterestRate = async (req, res) => {
         const interest = {
             InterestRateTableCode: req.body.InterestRateTableCode,
             InterestRateTableName: req.body.InterestRateTableName,
-            term: req.body.term,
+            Term: req.body.Term,
             InterestRate: req.body.InterestRate,
-            effectiveDate: new Date(req.body.effectiveDate),
+            EffectiveDate: new Date(req.body.EffectiveDate),
         }
         console.log(interest);
         if (_.isNumber(req.body.InterestRate) === false) {
 
             return res.status(400).send('InterestRate is not a number')
         }
-        if (isNaN(Number(new Date(req.body.effectiveDate)))) {
-            console.log(Number(new Date(req.body.effectiveDate)));
+        if (isNaN(Number(new Date(req.body.EffectiveDate)))) {
+            console.log(Number(new Date(req.body.EffectiveDate)));
             return res.status(400).send('EffectiveDate is not date type')
         }
-        if (isNaN(Number(req.body.term.slice(0, req.body.term.length - 1))) | !isNaN(Number(req.body.term.slice(req.body.term.length - 1)))) {
-            console.log(req.body.term.slice(req.body.term.length - 1));
+        if (isNaN(Number(req.body.Term.slice(0, req.body.Term.length - 1))) | !isNaN(Number(req.body.Term.slice(req.body.Term.length - 1)))) {
+            console.log(req.body.Term.slice(req.body.Term.length - 1));
             return res.status(400).send('nhap chua dung dinh dang');
         }
 
-        const term = req.body.term
-        const effectiveDate = req.body.effectiveDate
-        const listInterestRate = await InterestRateService.getListInterestRateByTermAndEffective(term, effectiveDate)
+        const Term = req.body.Term
+        const EffectiveDate = req.body.EffectiveDate
+        const listInterestRate = await InterestRateService.getListInterestRateByTermAndEffective(Term, EffectiveDate)
         console.log('listInterestRate', listInterestRate)
         if (listInterestRate.length > 0) {
             return res.status(400).send('bản ghi đã tồn tại')

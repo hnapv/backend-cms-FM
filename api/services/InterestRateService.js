@@ -1,16 +1,23 @@
-const InterestRateTable = require ('../models/InterestRateModel');
+const InterestRateTable = require('../models/InterestRateTableModel');
 
-const GetListInterestRate = async()=>{
+const GetListInterestRate = async () => {
   const listInterestRate = await InterestRateTable.find()
   return listInterestRate
 }
 
-const getListInterestRateByTermAndEffective = async (term, effectiveDate) => {
+const getListInterestRateByTerm = async (Term) => {
+  const getIRbyTerm = await InterestRateTable.find({
+    Term: Term
+  })
+  return getIRbyTerm
+}
+
+const getListInterestRateByTermAndEffective = async (Term, EffectiveDate) => {
   const listInterestRate = await InterestRateTable.find({
-    term: term,
-    effectiveDate: effectiveDate
-})
-return listInterestRate
+    Term: Term,
+    EffectiveDate: EffectiveDate
+  })
+  return listInterestRate
 }
 
 const insertInterestRate = async (data) => {
@@ -18,7 +25,7 @@ const insertInterestRate = async (data) => {
   return dataInsert
 }
 
-const getListInterestRateByInterestRateTableCode = async(InterestRateTableCode)=>{
+const getListInterestRateByInterestRateTableCode = async (InterestRateTableCode) => {
   const data = await InterestRateTable.find({
     InterestRateTableCode: InterestRateTableCode
   })
@@ -27,6 +34,7 @@ const getListInterestRateByInterestRateTableCode = async(InterestRateTableCode)=
 
 module.exports = {
   getListInterestRateByTermAndEffective,
+  getListInterestRateByTerm,
   insertInterestRate,
   getListInterestRateByInterestRateTableCode,
   GetListInterestRate

@@ -5,7 +5,7 @@ const CreateOrder = async(Data)=>{
     return createData
 }
 
-const getContractByOrderNo = async(OrderNo)=>{
+const getContractDetailByOrderNo = async(OrderNo)=>{
     const data = await Contract.findOne({
         OrderNo: OrderNo
     })
@@ -19,6 +19,6 @@ const getListContract = async()=>{
 
 module.exports= {
     CreateOrder,
-    getContractByOrderNo,
+    getContractDetailByOrderNo,
     getListContract
 }

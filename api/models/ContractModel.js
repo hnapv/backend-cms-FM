@@ -8,12 +8,15 @@ var ContractSchema = new Schema({
     CustomerName: String,
     CustomerID: String,
     InvestmentPrincipal: Number,
+    OrderDate: Date,
     Term: String,
+    MaturityDate: Date,
     InterestRate: Number,
     Profit: Number,
     GrossIncome: Number,
     CustodyID: String,
-    CustodyFullName: String
+    CustodyFullName: String,
+    ContractStatus: String
 }, { timestamps: true })
 
 var Contract = mongoose.model("Contract", ContractSchema);

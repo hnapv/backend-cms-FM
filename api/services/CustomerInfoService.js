@@ -10,9 +10,16 @@ const CreateCustomerInfo = async(data)=>{
     return createData
 }
 
-const GetListCustomerInfoById = async (id)=>{
+const GetListCustomerInfoByCustomerID = async (CustomerID)=>{
     const listCustomer = await CustomerInfomation.find({
-        id: id
+        CustomerID: CustomerID
+    })
+    return listCustomer
+}
+
+const GetACustomerInfoByCustomerID = async (CustomerID)=>{
+    const listCustomer = await CustomerInfomation.findOne({
+        CustomerID: CustomerID
     })
     return listCustomer
 }
@@ -26,6 +33,7 @@ const PutCustomerInfo = async(filter,updateInfo)=>{
 module.exports ={
     GetListCustomerInfo,
     CreateCustomerInfo,
-    GetListCustomerInfoById,
+    GetListCustomerInfoByCustomerID,
+    GetACustomerInfoByCustomerID,
     PutCustomerInfo
 }

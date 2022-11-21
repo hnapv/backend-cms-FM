@@ -2,18 +2,18 @@ var mongoose = require("mongoose");
 
 var Schema= mongoose.Schema;
 var CustomerInfoSchema= new Schema({
-    fullName: String,
-    id: String,
-    dateOfIssue: Date,
-    placeOfIssue: String,
-    gender: {
+    CustomerName: String,
+    CustomerID: String,
+    DateOfIssue: Date,
+    PlaceOfIssue: String,
+    Gender: {
         type: String,
         enum: ['male','female','other']
     },
-    birthDay: Date,
-    email: String,
-    phoneNumber: Number,
-    address: String    
+    BirthDay: Date,
+    Email: String,
+    PhoneNumber: Number,
+    Address: String    
 }, {timestamps: true});
 
 var CustomerInfomation = mongoose.model("CustomerInfomation",CustomerInfoSchema);

@@ -1,15 +1,46 @@
 const UserService = require("../services/UserService")
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken')
 
-const apiGetUserByUserName= async(req,res)=>{
-    console.log('apiGetUserByLoginName');
-    res.send(200);
+const verifyToken = (req,res,next)=>{
+    const token = req.headers.token;
+    if(token){
+        const accessToken = token.split(" ")[1];
+        console.log(accessToken)
+        jwt.verify(accessToken,process.env.JWT_ACCESS_KEY,(err,user)=>{
+            if(err){
+                res.status(403).json("Token is not valid")
+            }
+            req.user=user
+            next()
+        })
+    }
+    else {
+        res.status(401).json("You're not authenticated")
+    }
+}
+
+const verifyTokenAndAdminAuth = (req,res,next)=>{
+    verifyToken(req,res,()=>{
+        if(req.user._id == req.params._id ||req.user.admin){
+            next();
+        }
+        else{
+            res.status(403).json("You're not allowed to delete other")
+        }
+    })
+}
+
+const apiGetListUser= async(req,res)=>{
+    const getlistuser = await UserService.GetListUser()
+    res.send(getlistuser);
 }
 
 const apiCreateUser = async(req,res)=>{
     try{
         const salt = await bcrypt.genSalt(10);
         const hashed = await bcrypt.hash(req.body.password,salt)
+        
         const User ={
             fullname: req.body.fullname,
             username: req.body.username,
@@ -36,7 +67,14 @@ const apiLoginUser = async(req,res)=>{
             res.status(400).send("Mat khau khong chinh xac!")
         }
         if(user && validPassword){
-            res.status(200).send(user)
+           const accessToken= jwt.sign({
+                _id: user._id,
+                admin: user.admin
+            },
+            process.env.JWT_ACCESS_KEY,
+            {expiresIn: "30s"})
+            const {password, ...others}= user._doc
+            res.status(200).send({...others,accessToken})
         }
     }
     catch(err){res.status(500).json(err)}
@@ -50,8 +88,9 @@ const apiPutUser = async(req,res)=>{
 }
 
 module.exports = {
-    apiGetUserByUserName,
+    apiGetListUser,
     apiCreateUser,
     apiPutUser,
-    apiLoginUser
+    apiLoginUser,
+    verifyToken
 }
