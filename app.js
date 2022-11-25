@@ -1,6 +1,7 @@
 var express = require("express");
 const { default: mongoose } = require("mongoose");
 var morgan = require("morgan");
+const cookieParser = require("cookie-parser")
 const dotenv= require('dotenv')
 
 const InterestRateRoute = require("./api/route/InteresRateRoute");
@@ -12,10 +13,11 @@ dotenv.config()
 var app = express();
 var port = process.env.PORT ||3000;
 
+app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
-
 app.use(morgan("dev"));
+
 
 app.use(InterestRateRoute)
 app.use(ContractRoute);
