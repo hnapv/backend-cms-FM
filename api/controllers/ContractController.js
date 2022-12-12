@@ -1,11 +1,12 @@
 const ContractService = require("../services/ContractService");
 const CustomerInfoService = require("../services/CustomerInfoService")
 const InterestRateService = require("../services/InterestRateService")
+const UserService = require("../services/UserService")
 
 const _ = require("lodash")
 
 
-
+//tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
 
 
@@ -14,7 +15,7 @@ const apiCreateContract = async (req, res) => {
     const CurentMonth = today.getMonth() + 1
     const CurentYear = today.getFullYear()
 
-    //lay so hd
+    //khoi tao so hd moi
     const listcontract = await ContractService.getListContract()
     const PrefixOrderNo = (data) => data.OrderNo.split("/")[0]
     const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1
@@ -28,7 +29,7 @@ const apiCreateContract = async (req, res) => {
         return res.status(500).send("Customer ID khong ton tai")
     }
 
-    //lay thong tin ky han
+    //lay thong tin ky han & lãi suất
     const Term = req.body.Term
     const getInterestRate = await InterestRateService.getListInterestRateByTerm(Term)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
@@ -42,8 +43,13 @@ const apiCreateContract = async (req, res) => {
         res.status(500).send('So tien khong hop le')
     }
     const HoldingPeriod = (MaturityDate - CurrentDate) / (1000 * 3600 * 24)
-    const Profit = Math.round(InvestmentPrincipal * getInterestRate.InterestRate / 100 * HoldingPeriod / 365)
+    const Profit = Math.round(InvestmentPrincipal * getInterestRate[0].InterestRate / 100 * HoldingPeriod / 365)
     const GrossIncome = InvestmentPrincipal + Profit
+
+    //lấy user tạo
+    const getCreater = await UserService.GetUserById(req.user)
+    const createUser = getCreater.username
+    console.log(createUser)
 
     const newContract = {
         OrderNo: OrderNo,
@@ -58,13 +64,16 @@ const apiCreateContract = async (req, res) => {
         GrossIncome: GrossIncome,
         CustodyID: "d",
         CustodyFullName: 'Don gian',
-        ContractStatus: "CHUA_DUYET"
+        ContractStatus: "CHUA_DUYET",
+        Creater: createUser,
+        Approver: "ADMIN"
     }
     console.log(newContract)
     const createContract = await ContractService.CreateOrder(newContract)
-    res.send(200)
+    res.send(createContract)
 }
 
+//xem chi tiet 1 HD
 const apigetContractDetailByOrderNo = async(req,res)=>{
     const OrderNo = req.body.OrderNo
     const data = await ContractService.getContractDetailByOrderNo(OrderNo)
@@ -72,8 +81,16 @@ const apigetContractDetailByOrderNo = async(req,res)=>{
     res.send (data)
 }
 
+//xem hd theo KH
+const apigetContractbyCustomerID = async(req,res)=>{
+    const CustomerID = req.body.CustomerID
+    const data = await ContractService.getContractbyCustomerID(CustomerID)
+    console.log("DS HĐ theo KH ==>",data)
+    res.send(data)
+}
 
 module.exports = {
     apiCreateContract,
-    apigetContractDetailByOrderNo
+    apigetContractDetailByOrderNo,
+    apigetContractbyCustomerID
 }

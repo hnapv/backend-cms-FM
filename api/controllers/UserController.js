@@ -8,10 +8,10 @@ const verifyToken = (req, res, next) => {
     const token = req.headers.token;
     if (token) {
         const accessToken = token.split(" ")[1];
-        console.log(accessToken)
+        console.log("accessToken ==>", accessToken)
         jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
             if (err) {
-                res.status(403).json("Token is not valid")
+                return res.status(403).json("Token is not valid")
             }
             req.user = user
             next()
@@ -106,11 +106,11 @@ const apiLoginUser = async (req, res) => {
         const username = req.body.username
         const user = await UserService.GetUserByUserName(username);
         if (!user) {
-            res.status(404).send("Tai khoan khong ton tai");
+            return res.status(400).send("Tai khoan khong ton tai");
         }
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         if (!validPassword) {
-            res.status(400).send("Mat khau khong chinh xac!")
+            return res.status(400).send("Mat khau khong chinh xac!")
         }
         if (user && validPassword) {
             const accessToken = generateAccessToken(user)

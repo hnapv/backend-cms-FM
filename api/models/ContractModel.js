@@ -16,7 +16,10 @@ var ContractSchema = new Schema({
     GrossIncome: Number,
     CustodyID: String,
     CustodyFullName: String,
-    ContractStatus: String
+    ContractStatus: String,
+    Creater: String,
+    Approver: String
+
 }, { timestamps: true })
 
 var Contract = mongoose.model("Contract", ContractSchema);

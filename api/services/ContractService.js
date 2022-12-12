@@ -17,8 +17,16 @@ const getListContract = async()=>{
     return data
 }
 
+const getContractbyCustomerID = async(CustomerID)=>{
+    const data = await Contract.find({
+        CustomerID: CustomerID
+    })
+    return data
+}
+
 module.exports= {
     CreateOrder,
     getContractDetailByOrderNo,
-    getListContract
+    getListContract,
+    getContractbyCustomerID
 }

@@ -7,6 +7,11 @@ const GetUserByUserName = async (username)=>{
     return listUser
 }
 
+const GetUserById = async(id)=>{
+    const user = await UserModel.findById(id)
+    return user
+}
+
 const GetListUser = async ()=>{
     const listUser = await UserModel.find()
     return listUser
@@ -31,6 +36,7 @@ const DeleteUser = async(data)=>{
 
 module.exports={
     GetUserByUserName,
+    GetUserById,
     GetListUser,
     CreateUser,
     DeleteUser
