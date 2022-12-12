@@ -73,6 +73,21 @@ const apiCreateContract = async (req, res) => {
     res.send(createContract)
 }
 
+//approve HD
+
+const apiApproveContract = async(req,res)=>{
+    const OrderNo = req.body.OrderNo
+    const Contract = await ContractService.getContractDetailByOrderNo(OrderNo)
+   
+    if(Contract==null){
+      return res.send('Số HĐ không tồn tại')
+    }
+    if(!Contract.ContractStatus==='CHUA_DUYET'){
+        return res.send('Trạng thái không hợp lệ')
+    }
+    // tiep tuc 
+}
+
 //xem chi tiet 1 HD
 const apigetContractDetailByOrderNo = async(req,res)=>{
     const OrderNo = req.body.OrderNo
@@ -91,6 +106,7 @@ const apigetContractbyCustomerID = async(req,res)=>{
 
 module.exports = {
     apiCreateContract,
+    apiApproveContract,
     apigetContractDetailByOrderNo,
     apigetContractbyCustomerID
 }

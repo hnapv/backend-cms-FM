@@ -64,7 +64,7 @@ const generateAccessToken = (user) => {
         admin: user.admin
     },
         process.env.JWT_ACCESS_KEY,
-        { expiresIn: "30s" });
+        { expiresIn: "30m" });
 }
 
 //generate refresh token
