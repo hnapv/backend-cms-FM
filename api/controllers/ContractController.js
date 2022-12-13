@@ -9,7 +9,6 @@ const _ = require("lodash")
 //tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
 
-
     const today = new Date()
     const CurentDay = today.getDate()
     const CurentMonth = today.getMonth() + 1
@@ -74,33 +73,37 @@ const apiCreateContract = async (req, res) => {
 }
 
 //approve HD
+const apiApproveContract = async (req, res) => {
 
-const apiApproveContract = async(req,res)=>{
-    const OrderNo = req.body.OrderNo
-    const Contract = await ContractService.getContractDetailByOrderNo(OrderNo)
-   
-    if(Contract==null){
-      return res.send('Số HĐ không tồn tại')
+    const filter = {
+        OrderNo: req.body.OrderNo,
+        ContractStatus: "CHUA_DUYET"
     }
-    if(!Contract.ContractStatus==='CHUA_DUYET'){
-        return res.send('Trạng thái không hợp lệ')
+
+    const approve = {
+        ContractStatus: "DA_DUYET"
     }
-    // tiep tuc 
+
+    const approveContract = await ContractService.putAContract(filter, approve)
+    if (approveContract === null) {
+        return res.send('Tài khoản chưa được tạo')
+    }
+    res.send(`Hợp đồng ${req.body.OrderNo} đã duyệt thành công!`)
 }
 
 //xem chi tiet 1 HD
-const apigetContractDetailByOrderNo = async(req,res)=>{
+const apigetContractDetailByOrderNo = async (req, res) => {
     const OrderNo = req.body.OrderNo
     const data = await ContractService.getContractDetailByOrderNo(OrderNo)
     console.log(data)
-    res.send (data)
+    res.send(data)
 }
 
 //xem hd theo KH
-const apigetContractbyCustomerID = async(req,res)=>{
+const apigetContractbyCustomerID = async (req, res) => {
     const CustomerID = req.body.CustomerID
     const data = await ContractService.getContractbyCustomerID(CustomerID)
-    console.log("DS HĐ theo KH ==>",data)
+    console.log("DS HĐ theo KH ==>", data)
     res.send(data)
 }
 

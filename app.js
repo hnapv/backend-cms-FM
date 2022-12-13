@@ -1,4 +1,5 @@
 var express = require("express");
+var cors = require('cors')
 const { default: mongoose } = require("mongoose");
 var morgan = require("morgan");
 const cookieParser = require("cookie-parser")
@@ -11,8 +12,9 @@ const UserRoute = require("./api/route/UserRoute")
 
 dotenv.config()
 var app = express();
-var port = process.env.PORT ||3000;
+var port = process.env.PORT ||4000;
 
+app.use(cors())
 app.use(cookieParser())
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));

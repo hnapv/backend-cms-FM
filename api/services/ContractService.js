@@ -1,3 +1,4 @@
+const { update } = require("lodash")
 const Contract = require("../models/ContractModel")
 
 const CreateOrder = async(Data)=>{
@@ -9,6 +10,11 @@ const getContractDetailByOrderNo = async(OrderNo)=>{
     const data = await Contract.findOne({
         OrderNo: OrderNo
     })
+    return data
+}
+
+const putAContract = async(filter,update)=>{
+    const data = await Contract.findOneAndUpdate(filter,update)
     return data
 }
 
@@ -27,6 +33,7 @@ const getContractbyCustomerID = async(CustomerID)=>{
 module.exports= {
     CreateOrder,
     getContractDetailByOrderNo,
+    putAContract,
     getListContract,
     getContractbyCustomerID
 }
