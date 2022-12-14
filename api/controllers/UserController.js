@@ -63,9 +63,9 @@ const generateAccessToken = (user) => {
         admin: user.admin
     },
         process.env.JWT_ACCESS_KEY,
-        { expiresIn: "30m" });
+        { expiresIn: "5s" });
 }
-
+console.log("là=>>",refreshTokens)
 //generate refresh token
 const generateRefreshToken = (user) => {
     return jwt.sign({
@@ -125,7 +125,7 @@ const apiLoginUser = async (req, res) => {
             res.status(200).send({ ...others, accessToken })
         }
     }
-    catch (err) { res.status(500).json(err) }
+    catch (err) { console.log(err+"") }
 }
 
 const apiLogoutUser = async(req,res)=>{
@@ -140,10 +140,12 @@ const apiPutUser = async (req, res) => {
 }
 
 const apiDeleteUser = async (req, res) => {
-    const _id = req.body._id
-    console.log(_id)
-    const delUser = await UserService.DeleteUser(_id)
-    res.send(delUser)
+    try{
+        const id = req.params.id
+        const delUser = await UserService.DeleteUser(id)
+        res.status(200).send('Tài khoản xóa thành công')
+    }
+    catch(err){res.status(500).send("Thao tác thất bại")}
 }
 
 
