@@ -31,6 +31,24 @@ const verifyTokenAndAdminAuth = (req, res, next) => {
         }
     })
 }
+//generate access token
+const generateAccessToken = (user) => {
+    return jwt.sign({
+        _id: user._id,
+        admin: user.admin
+    },
+        process.env.JWT_ACCESS_KEY,
+        { expiresIn: "5s" });
+}
+//generate refresh token
+const generateRefreshToken = (user) => {
+    return jwt.sign({
+        _id: user._id,
+        admin: user.admin
+    },
+        process.env.JWT_REFRESH_KEY,
+        { expiresIn: "365d" })
+}
 
 const apiGetListUser = async (req, res) => {
     const getlistuser = await UserService.GetListUser()
@@ -56,25 +74,6 @@ const apiCreateUser = async (req, res) => {
     catch (err) { res.status(500).json(err) }
 }
 
-//generate access token
-const generateAccessToken = (user) => {
-    return jwt.sign({
-        _id: user._id,
-        admin: user.admin
-    },
-        process.env.JWT_ACCESS_KEY,
-        { expiresIn: "5s" });
-}
-console.log("là=>>",refreshTokens)
-//generate refresh token
-const generateRefreshToken = (user) => {
-    return jwt.sign({
-        _id: user._id,
-        admin: user.admin
-    },
-        process.env.JWT_REFRESH_KEY,
-        { expiresIn: "365d" })
-}
 
 const apiRefreshToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken
@@ -114,6 +113,7 @@ const apiLoginUser = async (req, res) => {
         if (user && validPassword) {
             const accessToken = generateAccessToken(user)
             const refreshToken = generateRefreshToken(user)
+            console.log(refreshToken,"=<la")
             refreshTokens.push(refreshToken)
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
