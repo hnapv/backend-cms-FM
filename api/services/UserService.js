@@ -23,7 +23,7 @@ const CreateUser = async(data)=>{
 }
 
 const DeleteUser = async(data)=>{
-    const deleteData = await UserModel.findById(data)
+    const deleteData = await UserModel.findByIdAndDelete(data)
     return deleteData
 }
 

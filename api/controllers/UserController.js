@@ -77,6 +77,7 @@ const apiCreateUser = async (req, res) => {
 
 const apiRefreshToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken
+    console.log("refreshToken=+>",refreshToken)
     if (!refreshToken) return res.status(401).json("You're not authenticated")
     if(!refreshTokens.includes(refreshToken)){
         return res.status(403).json("Refresh token is not valid")
@@ -89,11 +90,13 @@ const apiRefreshToken = async (req, res) => {
         const newAccessToken = generateAccessToken(user)
         const newRefreshToken = generateRefreshToken(user)
         refreshTokens.push(newRefreshToken)
+        console.log(refreshTokens)
         res.cookie("refreshToken", newRefreshToken, {
             httpOnly: true,
             secure: false,
             path: "/",
-            sameSite: "strict"
+            sameSite: "strict",
+            maxAge: 9000000000
         })
         res.status(200).json({ accessToken: newAccessToken })
     })
@@ -113,13 +116,14 @@ const apiLoginUser = async (req, res) => {
         if (user && validPassword) {
             const accessToken = generateAccessToken(user)
             const refreshToken = generateRefreshToken(user)
-            console.log(refreshToken,"=<la")
             refreshTokens.push(refreshToken)
+            console.log(refreshTokens)
             res.cookie("refreshToken", refreshToken, {
                 httpOnly: true,
                 secure: false,
                 path: "/",
-                sameSite: "strict"
+                sameSite: "strict",
+                maxAge: 9000000000
             })
             const { password, ...others } = user._doc
             res.status(200).send({ ...others, accessToken })
