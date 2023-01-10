@@ -2,6 +2,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
+    userid:  {
+        type: String,
+        unique: true
+    },
     fullname: {
         type: String,
         required: true,
@@ -10,14 +14,12 @@ var UserSchema = new Schema({
     username: {
         type: String,
         required: true,
-        minlength: 6,
-        maxlength: 20,
         unique: true
     },
     password: {
         type: String,
         required: true,
-        minlength: 8,
+        minlength: 6,
         maxlength: 100,
     },
     email: {
@@ -28,7 +30,11 @@ var UserSchema = new Schema({
     admin: {
         type: Boolean,
         default: false
-    }
+    },
+    // role: {
+    //     type: String,
+    //     enum: ['O','A','SM','S']
+    // }
 })
 
 var User = mongoose.model("User", UserSchema)

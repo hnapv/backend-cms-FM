@@ -38,7 +38,7 @@ const generateAccessToken = (user) => {
         admin: user.admin
     },
         process.env.JWT_ACCESS_KEY,
-        { expiresIn: "5s" });
+        { expiresIn: "3h" });
 }
 //generate refresh token
 const generateRefreshToken = (user) => {
@@ -61,6 +61,7 @@ const apiCreateUser = async (req, res) => {
         const hashed = await bcrypt.hash(req.body.password, salt)
 
         const User = {
+            userid: req.body.userid,
             fullname: req.body.fullname,
             username: req.body.username,
             password: hashed,

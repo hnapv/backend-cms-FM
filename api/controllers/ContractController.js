@@ -5,6 +5,11 @@ const UserService = require("../services/UserService")
 
 const _ = require("lodash")
 
+const LoginUserInfo = async (a) => {
+    const user = await UserService.GetUserById(a)
+    return (user)
+}
+
 
 //tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
@@ -31,6 +36,7 @@ const apiCreateContract = async (req, res) => {
     //lay thong tin ky han & lãi suất
     const Term = req.body.Term
     const getInterestRate = await InterestRateService.getListInterestRateByTerm(Term)
+    console.log('getInterestRate==>', getInterestRate)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
     const CurrentDate = new Date(`${CurentYear}/${CurentMonth}/${CurentDay}`)
     let MaturityDate = new Date(`${CurentYear}/${CurentMonth}/${CurentDay}`)
@@ -46,9 +52,10 @@ const apiCreateContract = async (req, res) => {
     const GrossIncome = InvestmentPrincipal + Profit
 
     //lấy user tạo
-    const getCreater = await UserService.GetUserById(req.user)
-    const createUser = getCreater.username
-    console.log(createUser)
+
+    const Creater = await LoginUserInfo(req.user)
+    console.log("LoginUserInfo=>", Creater)
+    const { username,_id } = Creater
 
     const newContract = {
         OrderNo: OrderNo,
@@ -58,14 +65,14 @@ const apiCreateContract = async (req, res) => {
         InvestmentPrincipal: InvestmentPrincipal,
         Term: req.body.Term,
         MaturityDate: MaturityDate,
-        InterestRate: getInterestRate.InterestRate,
+        InterestRate: getInterestRate[0].InterestRate,
         Profit: Profit,
         GrossIncome: GrossIncome,
-        CustodyID: "d",
-        CustodyFullName: 'Don gian',
+        CustodyID:_id,
+        //  CustodyFullName: 'Don gian',
         ContractStatus: "CHUA_DUYET",
-        Creater: createUser,
-        Approver: "ADMIN"
+        Creater: username,
+        Approver: ""
     }
     console.log(newContract)
     const createContract = await ContractService.CreateOrder(newContract)
@@ -75,18 +82,25 @@ const apiCreateContract = async (req, res) => {
 //approve HD
 const apiApproveContract = async (req, res) => {
 
+    //lấy user tạo
+
+    const Creater = await LoginUserInfo(req.user)
+    console.log("LoginUserInfo=>", Creater)
+    const { username } = Creater
+
     const filter = {
         OrderNo: req.body.OrderNo,
         ContractStatus: "CHUA_DUYET"
     }
 
     const approve = {
-        ContractStatus: "DA_DUYET"
+        ContractStatus: "DA_DUYET",
+        Approver: username
     }
 
     const approveContract = await ContractService.putAContract(filter, approve)
     if (approveContract === null) {
-        return res.send('Tài khoản chưa được tạo')
+        return res.send('Thao tác thất bại')
     }
     res.send(`Hợp đồng ${req.body.OrderNo} đã duyệt thành công!`)
 }
