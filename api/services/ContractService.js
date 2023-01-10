@@ -1,4 +1,3 @@
-const { update } = require("lodash")
 const Contract = require("../models/ContractModel")
 
 const CreateOrder = async(Data)=>{
@@ -23,6 +22,11 @@ const getListContract = async()=>{
     return data
 }
 
+const getContractFilter = async(a)=>{
+    const data = await Contract.find(a)
+    return data
+}
+
 const getContractbyCustomerID = async(CustomerID)=>{
     const data = await Contract.find({
         CustomerID: CustomerID
@@ -30,10 +34,17 @@ const getContractbyCustomerID = async(CustomerID)=>{
     return data
 }
 
+const contractAggregate = async(a)=>{
+   const data =  Contract.aggregate(a)
+   return data
+}
+
 module.exports= {
     CreateOrder,
     getContractDetailByOrderNo,
     putAContract,
     getListContract,
-    getContractbyCustomerID
+    getContractbyCustomerID,
+    getContractFilter,
+    contractAggregate
 }

@@ -31,10 +31,10 @@ var UserSchema = new Schema({
         type: Boolean,
         default: false
     },
-    // role: {
-    //     type: String,
-    //     enum: ['O','A','SM','S']
-    // }
+    role: {
+        type: String,
+        enum: ['O','A','SM','S']
+    }
 })
 
 var User = mongoose.model("User", UserSchema)

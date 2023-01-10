@@ -55,7 +55,7 @@ const apiCreateContract = async (req, res) => {
 
     const Creater = await LoginUserInfo(req.user)
     console.log("LoginUserInfo=>", Creater)
-    const { username,_id } = Creater
+    const { username, _id, userid, fullname } = Creater
 
     const newContract = {
         OrderNo: OrderNo,
@@ -68,8 +68,9 @@ const apiCreateContract = async (req, res) => {
         InterestRate: getInterestRate[0].InterestRate,
         Profit: Profit,
         GrossIncome: GrossIncome,
-        CustodyID:_id,
-        //  CustodyFullName: 'Don gian',
+        CustodyObjectID: _id,
+        CustodyID: userid,
+        CustodyFullName: fullname,
         ContractStatus: "CHUA_DUYET",
         Creater: username,
         Approver: ""
@@ -121,9 +122,53 @@ const apigetContractbyCustomerID = async (req, res) => {
     res.send(data)
 }
 
+const apigetContractFilter = async (req, res) => {
+
+    const filter = {
+        CustodyID: {
+            $in: [/^12/,"d"]
+        },
+        ContractStatus: "DA_DUYET"
+    }
+    const getcontract = await ContractService.getContractFilter(filter)
+    console.log(getcontract)
+    res.status(200).json(getcontract)
+}
+
+const apigetContractAggregate = async(req,res)=>{
+    const ab = ["CHUA_DUYET","DA_DUYET"]
+    const pineline = [
+        {
+            $match:
+            {
+                ContractStatus: 
+                {
+                    $in: ab
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$CustomerName",
+                tongLa: 
+                {
+                    $sum: {
+                        "$toInt": "$InvestmentPrincipal"
+                    }
+                }
+            }
+        }
+    ]
+    const getcontract = await ContractService.contractAggregate(pineline)
+    console.log(getcontract)
+    res.status(200).send(getcontract)
+}
+
 module.exports = {
     apiCreateContract,
     apiApproveContract,
     apigetContractDetailByOrderNo,
-    apigetContractbyCustomerID
+    apigetContractbyCustomerID,
+    apigetContractFilter,
+    apigetContractAggregate
 }

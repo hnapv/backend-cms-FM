@@ -9,6 +9,9 @@ router.post("/api/contract/createContract",UserController.verifyToken,ContractCo
 router.put("/api/contract/approveContract",UserController.verifyToken,ContractController.apiApproveContract);
 router.get("/api/contract/getContractDetail",ContractController.apigetContractDetailByOrderNo);
 router.get("/api/contract/getContractByCustomerID",UserController.verifyToken,ContractController.apigetContractbyCustomerID);
+router.get("/api/contract/getContractFilter",ContractController.apigetContractFilter);
+router.get("/api/contract/getContractAggregate",ContractController.apigetContractAggregate);
+
 
 
 

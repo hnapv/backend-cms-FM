@@ -72,7 +72,8 @@ const apiCreateUser = async (req, res) => {
         res.send(insertNewUser)
 
     }
-    catch (err) { res.status(500).json(err) }
+    catch (err) { console.log(err+"")
+        return res.status(500).json(err) }
 }
 
 
