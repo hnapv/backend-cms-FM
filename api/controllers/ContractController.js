@@ -2,6 +2,7 @@ const ContractService = require("../services/ContractService");
 const CustomerInfoService = require("../services/CustomerInfoService")
 const InterestRateService = require("../services/InterestRateService")
 const UserService = require("../services/UserService")
+const UpperLevelMgtService = require("../services/UpperLevelMgtService")
 
 const _ = require("lodash")
 
@@ -126,7 +127,7 @@ const apigetContractFilter = async (req, res) => {
 
     const filter = {
         CustodyID: {
-            $in: [/^12/,"d"]
+            $in: [/^12/, "d"]
         },
         ContractStatus: "DA_DUYET"
     }
@@ -135,13 +136,17 @@ const apigetContractFilter = async (req, res) => {
     res.status(200).json(getcontract)
 }
 
-const apigetContractAggregate = async(req,res)=>{
-    const ab = ["CHUA_DUYET","DA_DUYET"]
+const apigetContractAggregate = async (req, res) => {
+    const UserID= req.body.UserID
+    
+    UpperLevelMgtService
+
+
     const pineline = [
         {
             $match:
             {
-                ContractStatus: 
+                ContractStatus:
                 {
                     $in: ab
                 }
@@ -150,7 +155,7 @@ const apigetContractAggregate = async(req,res)=>{
         {
             $group: {
                 _id: "$CustomerName",
-                tongLa: 
+                tongLa:
                 {
                     $sum: {
                         "$toInt": "$InvestmentPrincipal"

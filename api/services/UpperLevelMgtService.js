@@ -5,6 +5,12 @@ const InsertUpperLevelMgt = async(a)=>{
     return insertdata
 }
 
+const getUpperLevelMgt = async(a,b)=>{
+    const getdata = await UpperLevelMgt.find(a).populate(b).exec()
+    return getdata
+}
+
 module.exports= {
-    InsertUpperLevelMgt
+    InsertUpperLevelMgt,
+    getUpperLevelMgt
 }

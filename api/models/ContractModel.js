@@ -14,7 +14,7 @@ var ContractSchema = new Schema({
   InterestRate: Number,
   Profit: Number,
   GrossIncome: Number,
-  CustodyObjectID: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  CustodyObjectID: { type: Schema.Types.ObjectId, ref: 'User' },
   CustodyID: String,
   CustodyFullName: String,
   ContractStatus: String,

@@ -30,7 +30,12 @@ const apiInsertUpperLevelMgt = async (req, res) => {
 }
 
 const apiGetUpperLevelMgt = async (req, res) => {
-    console.log('apiGetListUpperLevelMgt')
+    const filter = {
+        UserID: req.body.UserID
+    }
+    const populate = 'UserID'
+    const getUpper = await UpperLevelMgtService.getUpperLevelMgt(filter,populate)
+    console.log(getUpper)
     res.send(200)
 }
 
