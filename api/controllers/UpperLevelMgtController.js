@@ -30,13 +30,19 @@ const apiInsertUpperLevelMgt = async (req, res) => {
 }
 
 const apiGetUpperLevelMgt = async (req, res) => {
-    const filter = {
-        UserID: req.body.UserID
-    }
-    const populate = 'UserID'
-    const getUpper = await UpperLevelMgtService.getUpperLevelMgt(filter,populate)
-    console.log(getUpper)
-    res.send(200)
+   try{
+       const filter = {
+           UserID: req.body.UserID
+       }
+       const populate = 'UserID'
+       const getUpper = await UpperLevelMgtService.getUpperLevelMgt(filter,populate)
+       console.log(getUpper)
+       res.status(200).send(getUpper)
+   }
+   catch(e){
+console.log(e+"")
+return res.status(500).send(e)
+   }
 }
 
 module.exports = {
