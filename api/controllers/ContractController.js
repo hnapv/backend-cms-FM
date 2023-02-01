@@ -40,15 +40,19 @@ const apiCreateContract = async (req, res) => {
     console.log('getInterestRate==>', getInterestRate)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
     const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
-    let MaturityDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
+    const OrderDate = new Date(req.body.OrderDate)
+    let MaturityDate = new Date(OrderDate)
     MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
+ 
+    console.log("OrderDate=>",OrderDate)
+    console.log("MaturityDate=>",MaturityDate)
 
     //tinh tien nhan
     const InvestmentPrincipal = req.body.InvestmentPrincipal
     if (!_.isInteger(InvestmentPrincipal)) {
         res.status(500).send('So tien khong hop le')
     }
-    const HoldingPeriod = (MaturityDate - CurrentDate) / (1000 * 3600 * 24)
+    const HoldingPeriod = (MaturityDate - OrderDate) / (1000 * 3600 * 24)
     const Profit = Math.round(InvestmentPrincipal * getInterestRate[0].InterestRate / 100 * HoldingPeriod / 365)
     const GrossIncome = InvestmentPrincipal + Profit
 
@@ -62,7 +66,7 @@ const apiCreateContract = async (req, res) => {
         OrderNo: OrderNo,
         CustomerName: listCustomer.CustomerName,
         CustomerID: req.body.CustomerID,
-        OrderDate: CurrentDate,
+        OrderDate: OrderDate,
         InvestmentPrincipal: InvestmentPrincipal,
         Term: req.body.Term,
         MaturityDate: MaturityDate,

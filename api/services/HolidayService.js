@@ -5,6 +5,11 @@ const InsertHoliday = async(a)=>{
     return data
 }
 
+const ChangeStatusHoliday = async(a)=>{
+    const data = await Holiday.findByIdAndUpdate(a)
+}
+
 module.exports= {
-    InsertHoliday
+    InsertHoliday,
+    ChangeStatusHoliday
 }
