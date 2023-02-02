@@ -60,22 +60,17 @@ const apiCreateContract = async (req, res) => {
     MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
  
     //code tiép
-    if(MaturityDate.getDay() == 0|MaturityDate.getDay() == 6){
-        console.log(MaturityDate)
-
-        MaturityDate=MaturityDate++
-        console.log(MaturityDate)
+    for(var i = 0; i<5; i++){
+        for(var j = 0; j < getListHoliday.length; j++){
+            if(MaturityDate.getDay() == 0|MaturityDate.getDay() == 6|MaturityDate.getTime()==getListHoliday[j].DateHoliday.getTime()){
+        
+                MaturityDate= new Date(MaturityDate.setDate(MaturityDate.getDate()+1))
+                console.log("f",j)
+            }
+        }
+        console.log(i)
     }
 
-    // const getListHoliday = await HolidayService.GetListHolidayDate({Active:true})
-    // for(var i = 0; i < getListHoliday.length; i++){
-    //     if(MaturityDate.getTime()==getListHoliday[i].DateHoliday.getTime()){
-    //         return res.status(500).send("Ngày đầu tư là ngày nghỉ")
-    //     }
-    // }
-
-    // console.log("OrderDate=>",OrderDate)
-    // console.log("MaturityDate=>",MaturityDate)
 
     //tinh tien nhan
     const InvestmentPrincipal = req.body.InvestmentPrincipal
@@ -108,7 +103,7 @@ const apiCreateContract = async (req, res) => {
         CustodyFullName: fullname,
         ContractStatus: "CHUA_DUYET",
         Creater: username,
-        Approver: ""
+        Approver: null
     }
     // console.log(newContract)
     const createContract = await ContractService.CreateOrder(newContract)
