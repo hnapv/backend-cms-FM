@@ -3,6 +3,7 @@ const CustomerInfoService = require("../services/CustomerInfoService")
 const InterestRateService = require("../services/InterestRateService")
 const UserService = require("../services/UserService")
 const UpperLevelMgtService = require("../services/UpperLevelMgtService")
+const HolidayService = require("../services/HolidayService")
 
 const _ = require("lodash")
 
@@ -35,17 +36,46 @@ const apiCreateContract = async (req, res) => {
     }
 
     //lay thong tin ky han & lãi suất
+    
+    const OrderDate = new Date(req.body.OrderDate)
+   
+    if(OrderDate.getDay() == 0|OrderDate.getDay() == 6){
+        return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
+    }
+
+    const getListHoliday = await HolidayService.GetListHolidayDate({Active:true})
+    for(var i = 0; i < getListHoliday.length; i++){
+        if(OrderDate.getTime()==getListHoliday[i].DateHoliday.getTime()){
+            return res.status(500).send("Ngày đầu tư là ngày nghỉ")
+        }
+    }
+
     const Term = req.body.Term
     const getInterestRate = await InterestRateService.getListInterestRateByTerm(Term)
-    console.log('getInterestRate==>', getInterestRate)
+    // console.log('getInterestRate==>', getInterestRate)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
     const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
-    const OrderDate = new Date(req.body.OrderDate)
+    
     let MaturityDate = new Date(OrderDate)
     MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
  
-    console.log("OrderDate=>",OrderDate)
-    console.log("MaturityDate=>",MaturityDate)
+    //code tiép
+    if(MaturityDate.getDay() == 0|MaturityDate.getDay() == 6){
+        console.log(MaturityDate)
+
+        MaturityDate=MaturityDate++
+        console.log(MaturityDate)
+    }
+
+    // const getListHoliday = await HolidayService.GetListHolidayDate({Active:true})
+    // for(var i = 0; i < getListHoliday.length; i++){
+    //     if(MaturityDate.getTime()==getListHoliday[i].DateHoliday.getTime()){
+    //         return res.status(500).send("Ngày đầu tư là ngày nghỉ")
+    //     }
+    // }
+
+    // console.log("OrderDate=>",OrderDate)
+    // console.log("MaturityDate=>",MaturityDate)
 
     //tinh tien nhan
     const InvestmentPrincipal = req.body.InvestmentPrincipal
@@ -59,7 +89,7 @@ const apiCreateContract = async (req, res) => {
     //lấy user tạo
 
     const Creater = await LoginUserInfo(req.user)
-    console.log("LoginUserInfo=>", Creater)
+    // console.log("LoginUserInfo=>", Creater)
     const { username, _id, userid, fullname } = Creater
 
     const newContract = {
@@ -80,7 +110,7 @@ const apiCreateContract = async (req, res) => {
         Creater: username,
         Approver: ""
     }
-    console.log(newContract)
+    // console.log(newContract)
     const createContract = await ContractService.CreateOrder(newContract)
     res.send(createContract)
 }
