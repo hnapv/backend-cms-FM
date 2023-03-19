@@ -5,19 +5,26 @@ const jwt = require('jsonwebtoken')
 let refreshTokens = []
 
 const verifyToken = (req, res, next) => {
-    const token = req.headers.token;
+    const token = req.headers.authorization;
     if (token) {
         const accessToken = token.split(" ")[1];
         jwt.verify(accessToken, process.env.JWT_ACCESS_KEY, (err, user) => {
             if (err) {
-                return res.status(403).json("Token is not valid")
+                return res.status(403).send(
+                    {
+                        EC: -1,
+                        EM: "Token is not valid"
+                    })
             }
             req.user = user
             next()
         })
     }
     else {
-        res.status(401).json("You're not authenticated")
+        res.status(401).send({
+            EC: -1,
+            EM: "You're not authenticated"
+        })
     }
 }
 
@@ -27,7 +34,11 @@ const verifyTokenAndAdminAuth = (req, res, next) => {
             next();
         }
         else {
-            res.status(403).json("You're not allowed to delete other")
+            res.status(403).send(
+                {
+                    EC: -1,
+                    EM: "You're not allowed to delete other"
+                })
         }
     })
 }
@@ -38,7 +49,7 @@ const generateAccessToken = (user) => {
         admin: user.admin
     },
         process.env.JWT_ACCESS_KEY,
-        { expiresIn: "3h" });
+        { expiresIn: "2h" });
 }
 //generate refresh token
 const generateRefreshToken = (user) => {
@@ -52,7 +63,7 @@ const generateRefreshToken = (user) => {
 
 const apiGetListUser = async (req, res) => {
     const getlistuser = await UserService.GetListUser()
-    res.send(getlistuser);
+    res.status(200).send(getlistuser);
 }
 
 const apiCreateUser = async (req, res) => {
@@ -72,23 +83,25 @@ const apiCreateUser = async (req, res) => {
         res.send(insertNewUser)
 
     }
-    catch (err) { console.log(err+"")
-        return res.status(500).json(err) }
+    catch (err) {
+        console.log(err + "")
+        return res.status(500).json(err)
+    }
 }
 
 
 const apiRefreshToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken
-    console.log("refreshToken=+>",refreshToken)
+    console.log("refreshToken=+>", refreshToken)
     if (!refreshToken) return res.status(401).json("You're not authenticated")
-    if(!refreshTokens.includes(refreshToken)){
+    if (!refreshTokens.includes(refreshToken)) {
         return res.status(403).json("Refresh token is not valid")
     }
     jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
         if (err) {
             console.log(err)
         }
-        refreshTokens = refreshTokens.filter((token)=>token !== refreshToken)
+        refreshTokens = refreshTokens.filter((token) => token !== refreshToken)
         const newAccessToken = generateAccessToken(user)
         const newRefreshToken = generateRefreshToken(user)
         refreshTokens.push(newRefreshToken)
@@ -109,11 +122,17 @@ const apiLoginUser = async (req, res) => {
         const username = req.body.username
         const user = await UserService.GetUserByUserName(username);
         if (!user) {
-            return res.status(400).send("Tai khoan khong ton tai");
+            return res.status(200).send({
+                EC: -1,
+                EM: "Tai khoan khong ton tai"
+            });
         }
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         if (!validPassword) {
-            return res.status(400).send("Mat khau khong chinh xac!")
+            return res.status(200).send({
+                EC: -1,
+                EM: "Mật khẩu không chính xác"
+            });
         }
         if (user && validPassword) {
             const accessToken = generateAccessToken(user)
@@ -128,15 +147,22 @@ const apiLoginUser = async (req, res) => {
                 maxAge: 9000000000
             })
             const { password, ...others } = user._doc
-            res.status(200).send({ ...others, accessToken })
+            res.status(200).send({
+                EC: 0,
+                EM: "Đăng nhập thành công",
+                account: { ...others, accessToken }
+            })
         }
     }
-    catch (err) { console.log(err+"") }
+    catch (err) {
+        console.log(err + "")
+        return res.status(500).send(err)
+    }
 }
 
-const apiLogoutUser = async(req,res)=>{
+const apiLogoutUser = async (req, res) => {
     res.clearCookie("refreshToken")
-    refreshTokens=refreshTokens.filter(token => token != req.cookies.refreshToken)
+    refreshTokens = refreshTokens.filter(token => token != req.cookies.refreshToken)
     res.status(200).json("Logged out!")
 }
 
@@ -146,12 +172,12 @@ const apiPutUser = async (req, res) => {
 }
 
 const apiDeleteUser = async (req, res) => {
-    try{
+    try {
         const id = req.params.id
         const delUser = await UserService.DeleteUser(id)
         res.status(200).send('Tài khoản xóa thành công')
     }
-    catch(err){res.status(500).send("Thao tác thất bại")}
+    catch (err) { res.status(500).send("Thao tác thất bại") }
 }
 
 

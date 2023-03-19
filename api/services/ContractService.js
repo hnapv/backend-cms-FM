@@ -17,7 +17,7 @@ const putAContract = async(filter,update)=>{
     return data
 }
 
-const getListContract = async()=>{
+const getListContracts = async()=>{
     const data = await Contract.find()
     return data
 }
@@ -43,7 +43,7 @@ module.exports= {
     CreateOrder,
     getContractDetailByOrderNo,
     putAContract,
-    getListContract,
+    getListContracts,
     getContractbyCustomerID,
     getContractFilter,
     contractAggregate
