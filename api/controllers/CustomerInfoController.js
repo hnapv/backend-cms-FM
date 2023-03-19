@@ -7,7 +7,7 @@ const apiGetListCustomerInfo = async(req,res)=>{
 
 const apiCreateCustomerInfo = async(req,res)=>{
     
-    // try{
+    try{
         const CustomerInfo = {
             CustomerName: req.body.CustomerName,
             CustomerID: req.body.CustomerID,
@@ -34,8 +34,10 @@ const apiCreateCustomerInfo = async(req,res)=>{
         console.log("id nafy",listCustomerByCustomerID)
         const createCustomerInfo = await CustomerInfoService.CreateCustomerInfo(CustomerInfo);
         res.send(createCustomerInfo);
-    // }
-    // catch(err){res.status(500).send("Ban ghi loi, chua tao thanh cong")}
+    }
+    catch(err){
+        console.log(err+"")
+        res.status(500).send("Ban ghi loi, chua tao thanh cong")}
 };
 
 const apiPutCustomerInfo = async(req,res)=>{

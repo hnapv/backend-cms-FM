@@ -11,6 +11,11 @@ const LoginUserInfo = async (a) => {
     return (user)
 }
 
+const apiGetListContracts = async (req,res)=>{
+    const data = await ContractService.getListContracts()
+    res.status(200).send(data)
+}
+
 
 //tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
@@ -21,7 +26,7 @@ const apiCreateContract = async (req, res) => {
     const CurrentYear = today.getFullYear()
 
     //khoi tao so hd moi
-    const listcontract = await ContractService.getListContract()
+    const listcontract = await ContractService.getListContracts()()
     const PrefixOrderNo = (data) => data.OrderNo.split("/")[0]
     const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1
     const lengthPrefixOrderNo = 6
@@ -183,5 +188,6 @@ module.exports = {
     apigetContractDetailByOrderNo,
     apigetContractbyCustomerID,
     apigetContractFilter,
-    apigetContractAggregate
+    apigetContractAggregate,
+    apiGetListContracts
 }
