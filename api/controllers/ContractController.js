@@ -3,6 +3,7 @@ const CustomerInfoService = require("../services/CustomerInfoService")
 const InterestRateService = require("../services/InterestRateService")
 const UserService = require("../services/UserService")
 const UpperLevelMgtService = require("../services/UpperLevelMgtService")
+const HolidayService = require("../services/HolidayService")
 
 const _ = require("lodash")
 
@@ -35,34 +36,62 @@ const apiCreateContract = async (req, res) => {
     }
 
     //lay thong tin ky han & lãi suất
+    
+    const OrderDate = new Date(req.body.OrderDate)
+   
+    if(OrderDate.getDay() == 0|OrderDate.getDay() == 6){
+        return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
+    }
+
+    const getListHoliday = await HolidayService.GetListHolidayDate({Active:true})
+    for(var i = 0; i < getListHoliday.length; i++){
+        if(OrderDate.getTime()==getListHoliday[i].DateHoliday.getTime()){
+            return res.status(500).send("Ngày đầu tư là ngày nghỉ")
+        }
+    }
+
     const Term = req.body.Term
     const getInterestRate = await InterestRateService.getListInterestRateByTerm(Term)
-    console.log('getInterestRate==>', getInterestRate)
+    // console.log('getInterestRate==>', getInterestRate)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
     const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
-    let MaturityDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
+    
+    let MaturityDate = new Date(OrderDate)
     MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
+ 
+    //code tiép
+    for(var i = 0; i<5; i++){
+        for(var j = 0; j < getListHoliday.length; j++){
+            if(MaturityDate.getDay() == 0|MaturityDate.getDay() == 6|MaturityDate.getTime()==getListHoliday[j].DateHoliday.getTime()){
+        
+                MaturityDate= new Date(MaturityDate.setDate(MaturityDate.getDate()+1))
+                console.log("f",j)
+            }
+        }
+        console.log(i)
+    }
+
 
     //tinh tien nhan
     const InvestmentPrincipal = req.body.InvestmentPrincipal
     if (!_.isInteger(InvestmentPrincipal)) {
         res.status(500).send('So tien khong hop le')
     }
-    const HoldingPeriod = (MaturityDate - CurrentDate) / (1000 * 3600 * 24)
+    const HoldingPeriod = (MaturityDate - OrderDate) / (1000 * 3600 * 24)
     const Profit = Math.round(InvestmentPrincipal * getInterestRate[0].InterestRate / 100 * HoldingPeriod / 365)
     const GrossIncome = InvestmentPrincipal + Profit
 
     //lấy user tạo
 
     const Creater = await LoginUserInfo(req.user)
-    console.log("LoginUserInfo=>", Creater)
+    // console.log("LoginUserInfo=>", Creater)
     const { username, _id, userid, fullname } = Creater
 
     const newContract = {
         OrderNo: OrderNo,
         CustomerName: listCustomer.CustomerName,
         CustomerID: req.body.CustomerID,
-        OrderDate: CurrentDate,
+        OrderDate: OrderDate,
         InvestmentPrincipal: InvestmentPrincipal,
         Term: req.body.Term,
         MaturityDate: MaturityDate,
@@ -74,9 +103,9 @@ const apiCreateContract = async (req, res) => {
         CustodyFullName: fullname,
         ContractStatus: "CHUA_DUYET",
         Creater: username,
-        Approver: ""
+        Approver: null
     }
-    console.log(newContract)
+    // console.log(newContract)
     const createContract = await ContractService.CreateOrder(newContract)
     res.send(createContract)
 }
