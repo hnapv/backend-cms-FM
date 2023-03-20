@@ -12,9 +12,34 @@ const LoginUserInfo = async (a) => {
     return (user)
 }
 
-const apiGetListContracts = async (req,res)=>{
+const apiGetListContracts = async (req, res) => {
     const data = await ContractService.getListContracts()
     res.status(200).send(data)
+}
+
+const apiGetContractPaginate = async (req, res) => {
+    try {
+
+        const limit = req.query.limit
+        const page = +req.query.page
+        const data = await ContractService.getListContractsWithPaginate(limit, +page - 1)
+        res.status(200).send({
+            EC: 0,
+            data: {
+                limit: limit,
+                page: page,
+                data: data
+            }
+        })
+    }
+    catch (err) {
+        console.log(err + "")
+        return res.status(200).send(
+            {
+                EC: -1,
+                EM: err.message
+            })
+    }
 }
 
 
@@ -36,21 +61,21 @@ const apiCreateContract = async (req, res) => {
     //lay thong tin KH
     const CustomerID = req.body.CustomerID
     const listCustomer = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID)
-    if (listCustomer===null) {
+    if (listCustomer === null) {
         return res.status(500).send("Customer ID khong ton tai")
     }
 
     //lay thong tin ky han & lãi suất
-    
+
     const OrderDate = new Date(req.body.OrderDate)
-   
-    if(OrderDate.getDay() == 0|OrderDate.getDay() == 6){
+
+    if (OrderDate.getDay() == 0 | OrderDate.getDay() == 6) {
         return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
     }
 
-    const getListHoliday = await HolidayService.GetListHolidayDate({Active:true})
-    for(var i = 0; i < getListHoliday.length; i++){
-        if(OrderDate.getTime()==getListHoliday[i].DateHoliday.getTime()){
+    const getListHoliday = await HolidayService.GetListHolidayDate({ Active: true })
+    for (var i = 0; i < getListHoliday.length; i++) {
+        if (OrderDate.getTime() == getListHoliday[i].DateHoliday.getTime()) {
             return res.status(500).send("Ngày đầu tư là ngày nghỉ")
         }
     }
@@ -60,17 +85,17 @@ const apiCreateContract = async (req, res) => {
     // console.log('getInterestRate==>', getInterestRate)
     const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
     const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
-    
+
     let MaturityDate = new Date(OrderDate)
     MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
- 
+
     //code tiép
-    for(var i = 0; i<5; i++){
-        for(var j = 0; j < getListHoliday.length; j++){
-            if(MaturityDate.getDay() == 0|MaturityDate.getDay() == 6|MaturityDate.getTime()==getListHoliday[j].DateHoliday.getTime()){
-        
-                MaturityDate= new Date(MaturityDate.setDate(MaturityDate.getDate()+1))
-                console.log("f",j)
+    for (var i = 0; i < 5; i++) {
+        for (var j = 0; j < getListHoliday.length; j++) {
+            if (MaturityDate.getDay() == 0 | MaturityDate.getDay() == 6 | MaturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
+
+                MaturityDate = new Date(MaturityDate.setDate(MaturityDate.getDate() + 1))
+                console.log("f", j)
             }
         }
         console.log(i)
@@ -171,8 +196,8 @@ const apigetContractFilter = async (req, res) => {
 }
 
 const apigetContractAggregate = async (req, res) => {
-    const UserObjectID= req.body.UserObjectID
-    
+    const UserObjectID = req.body.UserObjectID
+
     UpperLevelMgtService
 
 
@@ -182,20 +207,20 @@ const apigetContractAggregate = async (req, res) => {
             {
                 ContractStatus:
                 {
-                    $in: ["CHUA_DUYET","DA_DUYET"]
+                    $in: ["CHUA_DUYET", "DA_DUYET"]
                 }
             }
         },
         {
             $group: {
-                _id: { tenKH: "$CustomerName", CMT: "$CustomerID"},
+                _id: { tenKH: "$CustomerName", CMT: "$CustomerID" },
                 TongGT:
                 {
                     $sum: {
                         "$toInt": "$InvestmentPrincipal"
                     }
                 },
-                SLHĐ: {$count:{}},
+                SLHĐ: { $count: {} },
                 TB:
                 {
                     $avg: {
@@ -218,5 +243,6 @@ module.exports = {
     apigetContractbyCustomerID,
     apigetContractFilter,
     apigetContractAggregate,
-    apiGetListContracts
+    apiGetListContracts,
+    apiGetContractPaginate
 }

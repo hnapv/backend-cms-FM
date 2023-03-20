@@ -22,6 +22,11 @@ const getListContracts = async()=>{
     return data
 }
 
+const getListContractsWithPaginate = async(limit,skip)=>{
+    const data = await Contract.find().limit(limit).skip(skip).sort({OrderNo:-1})
+    return data
+}
+
 const getContractFilter = async(a)=>{
     const data = await Contract.find(a)
     return data
@@ -46,5 +51,6 @@ module.exports= {
     getListContracts,
     getContractbyCustomerID,
     getContractFilter,
-    contractAggregate
+    contractAggregate,
+    getListContractsWithPaginate
 }
