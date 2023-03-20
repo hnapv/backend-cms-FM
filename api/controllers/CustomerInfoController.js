@@ -5,6 +5,29 @@ const apiGetListCustomerInfo = async(req,res)=>{
     res.send(ListCustomerInfo)
 };
 
+const apiGetDetailCustomerByCustomerID =async(req,res)=> {
+    try {
+        const CustomerID = req.body.CustomerID
+        const data = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID);
+        console.log("dataa=>>",data,CustomerID)
+        if(data===null){
+            return res.status(404).send({
+                EC: -1,
+                EM: "Not found"
+            })
+        }
+        res.status(200).send({
+            EC:0,
+            EM:data
+        })
+    } catch (err) {
+        console.log(err + "")
+        return res.status(500).send(err)
+    }
+
+    
+}
+
 const apiCreateCustomerInfo = async(req,res)=>{
     
     try{
@@ -19,7 +42,7 @@ const apiCreateCustomerInfo = async(req,res)=>{
             PhoneNumber: req.body.PhoneNumber,
             Address: req.body.Address
         }
-        console.log(CustomerInfo)
+        console.log("the",CustomerInfo)
   // check truyen gia tri thieu
         if(req.body.CustomerID==undefined|req.body.CustomerID==""){
             console.log(req.body.CustomerID)
@@ -27,11 +50,11 @@ const apiCreateCustomerInfo = async(req,res)=>{
         }
         
         const CustomerID = req.body.CustomerID
-        const listCustomerByCustomerID = await CustomerInfoService.GetListCustomerInfoByCustomerID(CustomerID);
-        if(listCustomerByCustomerID.length>0){
+        const listCustomerByCustomerID = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID);
+        console.log("ida ton tai ==>",listCustomerByCustomerID)
+        if(listCustomerByCustomerID){
             return res.status(400).send("CustomerID da ton tai")
         }
-        console.log("id nafy",listCustomerByCustomerID)
         const createCustomerInfo = await CustomerInfoService.CreateCustomerInfo(CustomerInfo);
         res.send(createCustomerInfo);
     }
@@ -65,7 +88,8 @@ const apiPutCustomerInfo = async(req,res)=>{
 module.exports = {
     apiGetListCustomerInfo,
     apiCreateCustomerInfo,
-    apiPutCustomerInfo
+    apiPutCustomerInfo,
+    apiGetDetailCustomerByCustomerID
 }
 
 // var listInfoCustomer = async res => {

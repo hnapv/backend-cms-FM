@@ -35,8 +35,8 @@ const apiCreateContract = async (req, res) => {
 
     //lay thong tin KH
     const CustomerID = req.body.CustomerID
-    const listCustomer = await CustomerInfoService.GetACustomerInfoByCustomerID(CustomerID)
-    if (!listCustomer.length < 1) {
+    const listCustomer = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID)
+    if (listCustomer===null) {
         return res.status(500).send("Customer ID khong ton tai")
     }
 
