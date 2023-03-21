@@ -20,16 +20,19 @@ const apiGetListContracts = async (req, res) => {
 const apiGetContractPaginate = async (req, res) => {
     try {
 
-        const limit = req.query.limit
+        const limit = +req.query.limit
         const page = +req.query.page
         const data = await ContractService.getListContractsWithPaginate(limit, +page - 1)
+        const totalContracts = await ContractService.getCountContracts()
         res.status(200).send({
-            EC: 0,
-            data: {
-                limit: limit,
+            DT: {
                 page: page,
+                totalRows: totalContracts,
+                totalPages: Math.ceil(+totalContracts/limit) ,
                 data: data
-            }
+            },
+            EC: 0,
+            EM: "Get success"
         })
     }
     catch (err) {

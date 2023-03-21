@@ -27,6 +27,11 @@ const getListContractsWithPaginate = async(limit,skip)=>{
     return data
 }
 
+const getCountContracts = async(limit,skip)=>{
+    const data = await Contract.countDocuments()
+    return data
+}
+
 const getContractFilter = async(a)=>{
     const data = await Contract.find(a)
     return data
@@ -52,5 +57,6 @@ module.exports= {
     getContractbyCustomerID,
     getContractFilter,
     contractAggregate,
-    getListContractsWithPaginate
+    getListContractsWithPaginate,
+    getCountContracts
 }
