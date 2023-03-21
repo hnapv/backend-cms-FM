@@ -1,9 +1,9 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 // ten, id, so tien, ky han, lai suat, loi tuc, tong thu nhap du kien, id nguoi tu van, ten nguoi tu van, so HD
 
-var ContractSchema = new Schema({
+const ContractSchema = new Schema({
   OrderNo: String,
   CustomerName: String,
   CustomerID: String,
@@ -23,6 +23,6 @@ var ContractSchema = new Schema({
 
 }, { timestamps: true })
 
-var Contract = mongoose.model("Contract", ContractSchema);
+const Contract = mongoose.model("Contract", ContractSchema);
 
 module.exports = Contract;

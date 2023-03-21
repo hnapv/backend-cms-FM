@@ -12,7 +12,7 @@ var CustomerInfoSchema= new Schema({
     },
     BirthDay: Date,
     Email: String,
-    PhoneNumber: Number,
+    PhoneNumber: String,
     Address: String    
 }, {timestamps: true});
 

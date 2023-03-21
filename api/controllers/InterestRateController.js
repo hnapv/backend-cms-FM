@@ -41,7 +41,7 @@ const apiCreateInterestRate = async (req, res) => {
         const listInterestRate = await InterestRateService.getListInterestRateByTermAndEffective(Term, EffectiveDate)
         console.log('listInterestRate', listInterestRate)
         if (listInterestRate.length > 0) {
-            return res.status(400).send('bản ghi đã tồn tại')
+            return res.status(400).send('Bản ghi đã tồn tại')
         }
         const dataInsert = await InterestRateService.insertInterestRate(interest)
         res.send(dataInsert)

@@ -17,8 +17,18 @@ const putAContract = async(filter,update)=>{
     return data
 }
 
-const getListContract = async()=>{
+const getListContracts = async()=>{
     const data = await Contract.find()
+    return data
+}
+
+const getListContractsWithPaginate = async(limit,skip)=>{
+    const data = await Contract.find().limit(limit).skip(skip).sort({OrderNo:-1})
+    return data
+}
+
+const getCountContracts = async()=>{
+    const data = await Contract.countDocuments()
     return data
 }
 
@@ -43,8 +53,10 @@ module.exports= {
     CreateOrder,
     getContractDetailByOrderNo,
     putAContract,
-    getListContract,
+    getListContracts,
     getContractbyCustomerID,
     getContractFilter,
-    contractAggregate
+    contractAggregate,
+    getListContractsWithPaginate,
+    getCountContracts
 }
