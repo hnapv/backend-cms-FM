@@ -4,8 +4,9 @@ const { apiGetListPolicyRate, apiCreatePolicyRate } = require('../controllers/Po
 const router = express.Router()
 
 
-router.get('/api/v1/getPolicyRate', apiGetListPolicyRate)
-router.post('/api/v1/createPolicyRate', apiCreatePolicyRate)
+router.get('/api/v1/policyRate/getPolicyRate', apiGetListPolicyRate)
+router.post('/api/v1/policyRate/createPolicyRate', apiCreatePolicyRate)
+router.post('/api/v1/policyRate/approvePolicyRate', apiApprovePolicyRate)
 
 
 module.exports = router
