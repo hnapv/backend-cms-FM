@@ -22,7 +22,7 @@ const apiGetContractPaginate = async (req, res) => {
 
         const limit = +req.query.limit
         const page = +req.query.page
-        const data = await ContractService.getListContractsWithPaginate(limit, +page - 1)
+        const data = await ContractService.getListContractsWithPaginate(limit, limit*(+page - 1))
         const totalContracts = await ContractService.getCountContracts()
         res.status(200).send({
             DT: {

@@ -27,7 +27,7 @@ const getListContractsWithPaginate = async(limit,skip)=>{
     return data
 }
 
-const getCountContracts = async(limit,skip)=>{
+const getCountContracts = async()=>{
     const data = await Contract.countDocuments()
     return data
 }
