@@ -34,9 +34,9 @@ const apiGetUpperLevelMgt = async (req, res) => {
        const filter = {
            UserID: req.body.UserID
        }
-       const populate = 'UserID'
+       const populate = 'UpperLevelMgt' //truong chua obj trong model
        const getUpper = await UpperLevelMgtService.getUpperLevelMgt(filter,populate)
-       console.log(getUpper)
+       const a = getUpper.map(x=>x.UpperLevelMgt)
        res.status(200).send(getUpper)
    }
    catch(e){

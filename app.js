@@ -5,12 +5,13 @@ var morgan = require("morgan");
 const cookieParser = require("cookie-parser")
 const dotenv = require('dotenv')
 
-const InterestRateRoute = require("./api/route/InteresRateRoute");
-const CustomerInfoRoute = require("./api/route/CustomerInfoRoute");
-const ContractRoute = require("./api/route/ContractRoute")
-const UserRoute = require("./api/route/UserRoute")
-const UpperLevelMgtRoute = require("./api/route/UpperLevelMgtRoute")
-const HolidayRoute = require("./api/route/HolidayRoute")
+const PolicyRateRoute = require("./api/routes/PolicyRateRoute");
+// const InterestRateRoute = require("./api/routes/InteresRateRoute");
+const CustomerInfoRoute = require("./api/routes/CustomerInfoRoute");
+const ContractRoute = require("./api/routes/ContractRoute")
+const UserRoute = require("./api/routes/UserRoute")
+const UpperLevelMgtRoute = require("./api/routes/UpperLevelMgtRoute")
+const HolidayRoute = require("./api/routes/HolidayRoute")
 
 dotenv.config()
 var app = express();
@@ -28,7 +29,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 
-app.use(InterestRateRoute)
+// app.use(InterestRateRoute)
+app.use(PolicyRateRoute)
 app.use(ContractRoute);
 app.use(UserRoute)
 app.use(CustomerInfoRoute)
