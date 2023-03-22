@@ -3,16 +3,16 @@ const express = require("express");
 const router = express.Router();
 
 const ContractController = require("../controllers/ContractController");
-const UserController = require("../controllers/UserController")
+const { verifyToken, verifyTokenAndAdminAuth } = require("../controllers/UserController");
 
-router.post("/api/contract/createContract",UserController.verifyToken,ContractController.apiCreateContract);
-router.put("/api/contract/approveContract",UserController.verifyToken,ContractController.apiApproveContract);
-router.get("/api/v1/contract/getListContracts",ContractController.apiGetListContracts);
-router.get("/api/v1/contract",ContractController.apiGetContractPaginate);
-router.get("/api/contract/getContractDetail",ContractController.apigetContractDetailByOrderNo);
-router.get("/api/contract/getContractByCustomerID",UserController.verifyToken,ContractController.apigetContractbyCustomerID);
-router.get("/api/contract/getContractFilter",ContractController.apigetContractFilter);
-router.get("/api/contract/getContractAggregate",ContractController.apigetContractAggregate);
+router.post("/api/v1/contract/createContract", verifyToken, ContractController.apiCreateContract);
+router.put("/api/contract/approveContract", verifyTokenAndAdminAuth, ContractController.apiApproveContract);
+router.get("/api/v1/contract/getListContracts", verifyToken, ContractController.apiGetListContracts);
+router.get("/api/v1/contract", verifyToken, ContractController.apiGetContractPaginate);
+router.get("/api/contract/getContractDetail", verifyToken, ContractController.apigetContractDetailByOrderNo);
+router.get("/api/contract/getContractByCustomerID", verifyToken, ContractController.apigetContractbyCustomerID);
+router.get("/api/contract/getContractFilter", verifyToken, ContractController.apigetContractFilter);
+router.get("/api/contract/getContractAggregate", verifyToken, ContractController.apigetContractAggregate);
 
 
 

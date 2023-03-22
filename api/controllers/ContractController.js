@@ -1,11 +1,12 @@
 const ContractService = require("../services/ContractService");
 const CustomerInfoService = require("../services/CustomerInfoService")
-const InterestRateService = require("../services/InterestRateService")
 const UserService = require("../services/UserService")
 const UpperLevelMgtService = require("../services/UpperLevelMgtService")
 const HolidayService = require("../services/HolidayService")
+const PolicyRateService = require("../services/PolicyRateService");
 
-const _ = require("lodash")
+const _ = require("lodash");
+const { findMinValueGreatEqual0InArray } = require("../../utils/utils");
 
 const LoginUserInfo = async (a) => {
     const user = await UserService.GetUserById(a)
@@ -22,13 +23,13 @@ const apiGetContractPaginate = async (req, res) => {
 
         const limit = +req.query.limit
         const page = +req.query.page
-        const data = await ContractService.getListContractsWithPaginate(limit, limit*(+page - 1))
+        const data = await ContractService.getListContractsWithPaginate(limit, limit * (+page - 1))
         const totalContracts = await ContractService.getCountContracts()
         res.status(200).send({
             DT: {
                 page: page,
                 totalRows: totalContracts,
-                totalPages: Math.ceil(+totalContracts/limit) ,
+                totalPages: Math.ceil(+totalContracts / limit),
                 data: data
             },
             EC: 0,
@@ -48,99 +49,109 @@ const apiGetContractPaginate = async (req, res) => {
 
 //tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
+    try {
 
-    const today = new Date()
-    const CurrentDay = today.getDate()
-    const CurrentMonth = today.getMonth() + 1
-    const CurrentYear = today.getFullYear()
+        const today = new Date()
+        const CurrentDay = today.getDate()
+        const CurrentMonth = today.getMonth() + 1
+        const CurrentYear = today.getFullYear()
 
-    //khoi tao so hd moi
-    const listcontract = await ContractService.getListContracts()()
-    const PrefixOrderNo = (data) => data.OrderNo.split("/")[0]
-    const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1
-    const lengthPrefixOrderNo = 6
-    const OrderNo = `${('0000000000').slice(0, lengthPrefixOrderNo - startOrderNo.toString().length) + startOrderNo.toString()}/${CurrentYear}/HTDT/ANHVP`
+        //khoi tao so hd moi
+        const listcontract = await ContractService.getListContracts()
+        const PrefixOrderNo = (data) => data.OrderNo.split("/")[0]
+        const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1
+        const lengthPrefixOrderNo = 6
+        const OrderNo = `${('0000000000').slice(0, lengthPrefixOrderNo - startOrderNo.toString().length) + startOrderNo.toString()}/${CurrentYear}/HTDT/ANHVP`
 
-    //lay thong tin KH
-    const CustomerID = req.body.CustomerID
-    const listCustomer = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID)
-    if (listCustomer === null) {
-        return res.status(500).send("Customer ID khong ton tai")
-    }
-
-    //lay thong tin ky han & lãi suất
-
-    const OrderDate = new Date(req.body.OrderDate)
-
-    if (OrderDate.getDay() == 0 | OrderDate.getDay() == 6) {
-        return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
-    }
-
-    const getListHoliday = await HolidayService.GetListHolidayDate({ Active: true })
-    for (var i = 0; i < getListHoliday.length; i++) {
-        if (OrderDate.getTime() == getListHoliday[i].DateHoliday.getTime()) {
-            return res.status(500).send("Ngày đầu tư là ngày nghỉ")
+        //lay thong tin KH
+        const CustomerID = req.body.CustomerID
+        const listCustomer = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID)
+        if (listCustomer === null) {
+            return res.status(404).send("Customer ID khong ton tai")
         }
-    }
 
-    const Term = req.body.Term
-    const getInterestRate = await InterestRateService.getListInterestRateByTerm(Term)
-    // console.log('getInterestRate==>', getInterestRate)
-    const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
-    const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
+        //lay thong tin ky han & lãi suất
 
-    let MaturityDate = new Date(OrderDate)
-    MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
+        const OrderDate = new Date(req.body.OrderDate)
 
-    //code tiép
-    for (var i = 0; i < 5; i++) {
-        for (var j = 0; j < getListHoliday.length; j++) {
-            if (MaturityDate.getDay() == 0 | MaturityDate.getDay() == 6 | MaturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
+        if (OrderDate.getDay() == 0 | OrderDate.getDay() == 6) {
+            return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
+        }
 
-                MaturityDate = new Date(MaturityDate.setDate(MaturityDate.getDate() + 1))
-                console.log("f", j)
+        const getListHoliday = await HolidayService.GetListHolidayDate({ Active: true })
+        for (var i = 0; i < getListHoliday.length; i++) {
+            if (OrderDate.getTime() == getListHoliday[i].DateHoliday.getTime()) {
+                return res.status(500).send("Ngày đầu tư là ngày nghỉ")
             }
         }
-        console.log(i)
+
+        const ListPolicyRate = await PolicyRateService.getListPolicyRate()
+        const orderDateMinusEffDate = ListPolicyRate.map(({ effectiveDate }) => (OrderDate.getTime() - +effectiveDate.getTime()))
+        const indexPolicyRate = findMinValueGreatEqual0InArray(orderDateMinusEffDate)
+
+        const applicablePolicyRate = ListPolicyRate[indexPolicyRate]
+
+        const applicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
+
+        const Term = req.body.Term
+        const convertApplicableRateTerm = applicableRateTerm.filter(a => a.term === Term)
+
+
+
+        const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
+        const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
+
+        let MaturityDate = new Date(OrderDate)
+        MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
+
+        for (var i = 0; i < 5; i++) {
+            for (var j = 0; j < getListHoliday.length; j++) {
+                if (MaturityDate.getDay() == 0 | MaturityDate.getDay() == 6 | MaturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
+
+                    MaturityDate = new Date(MaturityDate.setDate(MaturityDate.getDate() + 1))
+                    console.log("f", j)
+                }
+            }
+            console.log(i)
+        }
+
+
+        //tinh tien nhan
+        const InvestmentPrincipal = req.body.InvestmentPrincipal
+        if (!_.isInteger(InvestmentPrincipal)) {
+            res.status(500).send('So tien khong hop le')
+        }
+        const HoldingPeriod = (MaturityDate - OrderDate) / (1000 * 3600 * 24)
+        const Profit = Math.round(+InvestmentPrincipal * +convertApplicableRateTerm[0].rate / 100 * +HoldingPeriod / 365)
+        const GrossIncome = InvestmentPrincipal + Profit
+
+        //lấy user tạo
+
+        const Creater = await LoginUserInfo(req.user)
+        const { username, _id, userid, fullname } = Creater
+
+        const newContract = {
+            OrderNo: OrderNo,
+            CustomerName: listCustomer.CustomerName,
+            CustomerID: req.body.CustomerID,
+            OrderDate: OrderDate,
+            InvestmentPrincipal: InvestmentPrincipal,
+            Term: req.body.Term,
+            MaturityDate: MaturityDate,
+            InterestRate: convertApplicableRateTerm[0].rate,
+            Profit: Profit,
+            GrossIncome: GrossIncome,
+            CustodyObjectID: _id,
+            CustodyID: userid,
+            CustodyFullName: fullname,
+            ContractStatus: "CHUA_DUYET",
+            Creater: username,
+            Approver: null
+        }
+        const createContract = await ContractService.CreateOrder(newContract)
+        res.send(createContract)
     }
-
-
-    //tinh tien nhan
-    const InvestmentPrincipal = req.body.InvestmentPrincipal
-    if (!_.isInteger(InvestmentPrincipal)) {
-        res.status(500).send('So tien khong hop le')
-    }
-    const HoldingPeriod = (MaturityDate - OrderDate) / (1000 * 3600 * 24)
-    const Profit = Math.round(InvestmentPrincipal * getInterestRate[0].InterestRate / 100 * HoldingPeriod / 365)
-    const GrossIncome = InvestmentPrincipal + Profit
-
-    //lấy user tạo
-
-    const Creater = await LoginUserInfo(req.user)
-    // console.log("LoginUserInfo=>", Creater)
-    const { username, _id, userid, fullname } = Creater
-
-    const newContract = {
-        OrderNo: OrderNo,
-        CustomerName: listCustomer.CustomerName,
-        CustomerID: req.body.CustomerID,
-        OrderDate: OrderDate,
-        InvestmentPrincipal: InvestmentPrincipal,
-        Term: req.body.Term,
-        MaturityDate: MaturityDate,
-        InterestRate: getInterestRate[0].InterestRate,
-        Profit: Profit,
-        GrossIncome: GrossIncome,
-        CustodyObjectID: _id,
-        CustodyID: userid,
-        CustodyFullName: fullname,
-        ContractStatus: "CHUA_DUYET",
-        Creater: username,
-        Approver: null
-    }
-    // console.log(newContract)
-    const createContract = await ContractService.CreateOrder(newContract)
-    res.send(createContract)
+    catch (err) { return res.status(500).send(err.message) }
 }
 
 //approve HD

@@ -2,10 +2,11 @@ const express = require("express");
 
 const router = express.Router();
 
-const HolidayController = require("../controllers/HolidayController")
+const HolidayController = require("../controllers/HolidayController");
+const { verifyToken } = require("../controllers/UserController");
 
-router.get("/api/holiday/getHolidayDate",HolidayController.apiGetListHolidayDate)
-router.post("/api/holiday/postHolidayDate",HolidayController.apiPostHolidayDate)
-router.put("/api/holiday/getHolidayDate",HolidayController.apiPutHolidayDate)
+router.get("/api/holiday/getHolidayDate", verifyToken, HolidayController.apiGetListHolidayDate)
+router.post("/api/holiday/postHolidayDate", verifyToken, HolidayController.apiPostHolidayDate)
+router.put("/api/holiday/getHolidayDate", verifyToken, HolidayController.apiPutHolidayDate)
 
 module.exports = router

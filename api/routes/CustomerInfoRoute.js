@@ -1,12 +1,13 @@
 const express = require("express");
 const { apiGetDetailCustomerByCustomerID, apiGetListCustomerInfo, apiCreateCustomerInfo, apiPutCustomerInfo } = require("../controllers/CustomerInfoController");
+const { verifyToken } = require("../controllers/UserController");
 
 const router = express.Router();
 
 
-router.post('/api/createCustomerInfo', apiCreateCustomerInfo)
-router.get('/api/getListCustomer',apiGetListCustomerInfo)
-router.post('/api/getDetailCustomerByCustomerID',apiGetDetailCustomerByCustomerID)
-router.put('/api/customer/putCustomerInfo',apiPutCustomerInfo)
+router.post('/api/createCustomerInfo', verifyToken, apiCreateCustomerInfo)
+router.get('/api/getListCustomer', verifyToken, apiGetListCustomerInfo)
+router.post('/api/getDetailCustomerByCustomerID', verifyToken, apiGetDetailCustomerByCustomerID)
+router.put('/api/customer/putCustomerInfo', verifyToken, apiPutCustomerInfo)
 
-module.exports=router;
+module.exports = router;

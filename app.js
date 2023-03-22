@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser")
 const dotenv = require('dotenv')
 
 const PolicyRateRoute = require("./api/routes/PolicyRateRoute");
-const InterestRateRoute = require("./api/routes/InteresRateRoute");
+// const InterestRateRoute = require("./api/routes/InteresRateRoute");
 const CustomerInfoRoute = require("./api/routes/CustomerInfoRoute");
 const ContractRoute = require("./api/routes/ContractRoute")
 const UserRoute = require("./api/routes/UserRoute")
@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
 
-app.use(InterestRateRoute)
+// app.use(InterestRateRoute)
 app.use(PolicyRateRoute)
 app.use(ContractRoute);
 app.use(UserRoute)
