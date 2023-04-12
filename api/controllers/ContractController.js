@@ -6,7 +6,7 @@ const HolidayService = require("../services/HolidayService")
 const PolicyRateService = require("../services/PolicyRateService");
 
 const _ = require("lodash");
-const { findMinValueGreatEqual0InArray } = require("../../utils/utils");
+const { findApplicablePolicyRate } = require("../../utils/utils");
 
 const LoginUserInfo = async (a) => {
     const user = await UserService.GetUserById(a)
@@ -86,11 +86,7 @@ const apiCreateContract = async (req, res) => {
         }
 
         const ListPolicyRate = await PolicyRateService.getListPolicyRate()
-        const orderDateMinusEffDate = ListPolicyRate.map(({ effectiveDate }) => (OrderDate.getTime() - +effectiveDate.getTime()))
-        const indexPolicyRate = findMinValueGreatEqual0InArray(orderDateMinusEffDate)
-
-        const applicablePolicyRate = ListPolicyRate[indexPolicyRate]
-
+        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate,OrderDate)
         const applicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
 
         const Term = req.body.Term
@@ -99,7 +95,7 @@ const apiCreateContract = async (req, res) => {
 
 
         const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
-        const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
+        // const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
 
         let MaturityDate = new Date(OrderDate)
         MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))

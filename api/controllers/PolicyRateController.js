@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { findApplicablePolicyRate } = require('../../utils/utils')
 
 const PolicyRateService = require("../services/PolicyRateService")
 
@@ -11,15 +12,15 @@ const apiGetListPolicyRate = async (req, res) => {
     })
 }
 
-const apiGetRateTermByPolicyRateId =async(req,res)=>{
-    try{
+const apiGetRateTermByPolicyRateId = async (req, res) => {
+    try {
 
-        const data ={
-            policyRateObjId : req.params.policyrateid
-        } 
+        const data = {
+            policyRateObjId: req.params.policyrateid
+        }
         const rateTermByPolicyRateId = await PolicyRateService.getRateTermByPolicyRateId(data)
         return res.status(200).send({
-            EC:0,
+            EC: 0,
             EM: "Get success",
             DT: rateTermByPolicyRateId
         })
@@ -80,9 +81,28 @@ const apiCreatePolicyRate = async (req, res) => {
     }
 }
 
+const apiGetApplicablePolicyRate = async (req, res) => {
+    try {
+        const OrderDate = new Date(req.body.OrderDate)
+        const ListPolicyRate = await PolicyRateService.getListPolicyRate()
+        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate, OrderDate)
+        const rawApplicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
+        const applicableRateTerm = rawApplicableRateTerm.map(({term,rate})=>({term,rate}))
+        res.status(200).send({
+            applicablePolicyRate: applicablePolicyRate,
+            term: applicableRateTerm
+        })
+    }
+    catch (err) {
+        console.log(err + "")
+        res.status(500).send(err.message)
+    }
+}
+
 module.exports = {
     apiGetListPolicyRate,
     apiCreatePolicyRate,
     apiApprovePolicyRate,
-    apiGetRateTermByPolicyRateId
+    apiGetRateTermByPolicyRateId,
+    apiGetApplicablePolicyRate
 }
