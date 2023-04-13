@@ -88,9 +88,10 @@ const apiGetApplicablePolicyRate = async (req, res) => {
         const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate, OrderDate)
         const rawApplicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
         const applicableRateTerm = rawApplicableRateTerm.map(({term,rate})=>({term,rate}))
+        console.log("req.body==>",req.body)
         res.status(200).send({
             applicablePolicyRate: applicablePolicyRate,
-            term: applicableRateTerm
+            rate_term: applicableRateTerm
         })
     }
     catch (err) {

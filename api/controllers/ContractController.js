@@ -6,7 +6,7 @@ const HolidayService = require("../services/HolidayService")
 const PolicyRateService = require("../services/PolicyRateService");
 
 const _ = require("lodash");
-const { findApplicablePolicyRate } = require("../../utils/utils");
+const { findApplicablePolicyRate, findWorkDayAfter } = require("../../utils/utils");
 
 const LoginUserInfo = async (a) => {
     const user = await UserService.GetUserById(a)
@@ -93,23 +93,22 @@ const apiCreateContract = async (req, res) => {
         const convertApplicableRateTerm = applicableRateTerm.filter(a => a.term === Term)
 
 
-
         const TermMonth = Number(req.body.Term.slice(0, req.body.Term.length - 1))
         // const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
 
         let MaturityDate = new Date(OrderDate)
         MaturityDate = new Date(MaturityDate.setMonth(MaturityDate.getMonth() + TermMonth))
 
-        for (var i = 0; i < 5; i++) {
-            for (var j = 0; j < getListHoliday.length; j++) {
-                if (MaturityDate.getDay() == 0 | MaturityDate.getDay() == 6 | MaturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
+        MaturityDate = findWorkDayAfter(MaturityDate,getListHoliday)
 
-                    MaturityDate = new Date(MaturityDate.setDate(MaturityDate.getDate() + 1))
-                    console.log("f", j)
-                }
-            }
-            console.log(i)
-        }
+        // for (var i = 0; i < 10; i++) {
+        //     for (var j = 0; j < getListHoliday.length; j++) {
+        //         if (MaturityDate.getDay() == 0 | MaturityDate.getDay() == 6 | MaturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
+
+        //             MaturityDate = new Date(MaturityDate.setDate(MaturityDate.getDate() + 1))
+        //         }
+        //     }
+        // }
 
 
         //tinh tien nhan
