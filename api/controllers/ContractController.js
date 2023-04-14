@@ -78,7 +78,7 @@ const apiCreateContract = async (req, res) => {
             return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
         }
 
-        const getListHoliday = await HolidayService.GetListHolidayDate({ Active: true })
+        const getListHoliday = await HolidayService.GetListHolidayDate({ active: true })
         for (var i = 0; i < getListHoliday.length; i++) {
             if (OrderDate.getTime() == getListHoliday[i].DateHoliday.getTime()) {
                 return res.status(500).send("Ngày đầu tư là ngày nghỉ")

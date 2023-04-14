@@ -2,9 +2,9 @@ var mongoose = require("mongoose");
 
 var Schema= mongoose.Schema;
 var HolidaySchema= new Schema({
-    DateHoliday: Date,
-    Description: String,
-    Active: Boolean,
+    dateHoliday: Date,
+    description: String,
+    active: Boolean,
     
 
 }, {timestamps: true});

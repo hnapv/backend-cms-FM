@@ -7,9 +7,9 @@ const apiGetListCustomerInfo = async(req,res)=>{
 
 const apiGetDetailCustomerByCustomerID =async(req,res)=> {
     try {
-        const CustomerID = req.body.CustomerID
-        const data = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID);
-        console.log("dataa=>>",data,CustomerID)
+        const customerId = req.body.customerId
+        const data = await CustomerInfoService.GetDetailCusInfoByCustomerID(customerId);
+        console.log("dataa=>>",data,customerId)
         if(data===null){
             return res.status(404).send({
                 EC: -1,
@@ -32,25 +32,25 @@ const apiCreateCustomerInfo = async(req,res)=>{
     
     try{
         const CustomerInfo = {
-            CustomerName: req.body.CustomerName,
-            CustomerID: req.body.CustomerID,
-            DateOfIssue: new Date(req.body.DateOfIssue),
-            PlaceOfIssue: req.body.PlaceOfIssue,
-            Gender: req.body.Gender,
-            BirthDay: new Date(req.body.BirthDay),
-            Email: req.body.Email,
-            PhoneNumber: req.body.PhoneNumber,
-            Address: req.body.Address
+            customerName: req.body.customerName,
+            customerId: req.body.customerId,
+            dateOfIssue: new Date(req.body.dateOfIssue),
+            placeOfIssue: req.body.placeOfIssue,
+            gender: req.body.gender,
+            birthday: new Date(req.body.birthday),
+            email: req.body.email,
+            phoneNumber: req.body.phoneNumber,
+            address: req.body.address
         }
         console.log("the",CustomerInfo)
   // check truyen gia tri thieu
-        if(req.body.CustomerID==undefined|req.body.CustomerID==""){
-            console.log(req.body.CustomerID)
+        if(req.body.customerId==undefined|req.body.customerId==""){
+            console.log(req.body.customerId)
             return res.status(400).send('Chua nhap CustomerID')
         }
         
-        const CustomerID = req.body.CustomerID
-        const listCustomerByCustomerID = await CustomerInfoService.GetDetailCusInfoByCustomerID(CustomerID);
+        const customerId = req.body.customerId
+        const listCustomerByCustomerID = await CustomerInfoService.GetDetailCusInfoByCustomerID(customerId);
         console.log("ida ton tai ==>",listCustomerByCustomerID)
         if(listCustomerByCustomerID){
             return res.status(400).send("CustomerID da ton tai")
@@ -67,15 +67,15 @@ const apiPutCustomerInfo = async(req,res)=>{
 
     const cusInfo= {
 
-        CustomerName: req.body.CustomerName,
+        customerName: req.body.customerName,
         id: req.body.id,
         DateOfIssue: new Date(req.body.DateOfIssue),
-        PlaceOfIssue: req.body.PlaceOfIssue,
-        Gender: req.body.Gender,
-        BirthDay: new Date(req.body.BirthDay),
-        Email: req.body.Email,
-        PhoneNumber: req.body.PhoneNumber,
-        Address: req.body.Address 
+        placeOfIssue: req.body.placeOfIssue,
+        gender: req.body.gender,
+        birthday: new Date(req.body.birthday),
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
+        address: req.body.address 
     }
 
     console.log("cus la",cusInfo)
@@ -119,7 +119,7 @@ module.exports = {
 //                 DateOfIssue: new Date(req.body.dateOfIssue),
 //                 placeOfIssue: req.body.placeOfIssue,
 //                 gender: req.body.gender,
-//                 BirthDay: new Date(req.body.birthDay),
+//                 birthday: new Date(req.body.birthday),
 //                 email: req.body.email,
 //                 phoneNumber: req.body.phoneNumber,
 //                 address: req.body.address
@@ -144,7 +144,7 @@ module.exports = {
 //                 dateOfIssue: new Date(req.body.dateOfIssue),
 //                 placeOfIssue: req.body.placeOfIssue,
 //                 gender: req.body.gender,
-//                 birthDay: new Date(req.body.birthDay),
+//                 birthday: new Date(req.body.birthday),
 //                 email: req.body.email,
 //                 phoneNumber: req.body.phoneNumber,
 //                 address: req.body.address

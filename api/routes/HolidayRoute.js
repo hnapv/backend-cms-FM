@@ -7,6 +7,6 @@ const { verifyToken } = require("../controllers/UserController");
 
 router.get("/api/holiday/getHolidayDate", verifyToken, HolidayController.apiGetListHolidayDate)
 router.post("/api/holiday/postHolidayDate", verifyToken, HolidayController.apiPostHolidayDate)
-router.put("/api/holiday/getHolidayDate", verifyToken, HolidayController.apiPutHolidayDate)
+router.put("/api/holiday/putHolidayDate", verifyToken, HolidayController.apiPutHolidayDate)
 
 module.exports = router
