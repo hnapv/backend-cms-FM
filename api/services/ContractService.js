@@ -5,9 +5,9 @@ const CreateOrder = async(Data)=>{
     return createData
 }
 
-const getContractDetailByOrderNo = async(OrderNo)=>{
+const getContractDetailByOrderNo = async(orderNo)=>{
     const data = await Contract.findOne({
-        OrderNo: OrderNo
+        orderNo: orderNo
     })
     return data
 }
@@ -23,7 +23,7 @@ const getListContracts = async()=>{
 }
 
 const getListContractsWithPaginate = async(limit,skip)=>{
-    const data = await Contract.find().limit(limit).skip(skip).sort({OrderNo:-1})
+    const data = await Contract.find().limit(limit).skip(skip).sort({orderNo:-1})
     return data
 }
 
@@ -37,9 +37,9 @@ const getContractFilter = async(a)=>{
     return data
 }
 
-const getContractbyCustomerID = async(CustomerID)=>{
+const getContractbyCustomerID = async(customerId)=>{
     const data = await Contract.find({
-        CustomerID: CustomerID
+        customerId: customerId
     })
     return data
 }

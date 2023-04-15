@@ -11,9 +11,9 @@ const CreateCustomerInfo = async(data)=>{
 }
 
 
-const GetDetailCusInfoByCustomerID = async (CustomerID)=>{
+const GetDetailCusInfoByCustomerID = async (customerId)=>{
     const listCustomer = await CustomerInfomation.findOne({
-        CustomerID: CustomerID
+        customerId: customerId
     })
     return listCustomer
 }

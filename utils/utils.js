@@ -18,7 +18,7 @@ const findApplicablePolicyRate = async (ListPolicyRate,OrderDate)=>{
 const findWorkDayAfter = (date,listHoliday)=>{
     for (var i = 0; i < 10; i++) {
         for (var j = 0; j < listHoliday.length; j++) {
-            if (date.getDay() == 0 | date.getDay() == 6 | date.getTime() == listHoliday[j].DateHoliday.getTime()) {
+            if (date.getDay() == 0 | date.getDay() == 6 | date.getTime() == listHoliday[j].dateHoliday.getTime()) {
 
                 date = new Date(date.setDate(date.getDate() + 1))
             }
