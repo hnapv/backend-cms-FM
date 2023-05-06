@@ -8,11 +8,11 @@ const findMinValueGreatEqual0InArray = (array) => {
     }
     return minIndex<0?"Không có giá trị thỏa mãn":minIndex
 }
-const findApplicablePolicyRate = async (ListPolicyRate,OrderDate)=>{
-    const orderDateMinusEffDate = await ListPolicyRate.map(({ effectiveDate }) => (OrderDate.getTime() - +effectiveDate.getTime()))
-    const indexPolicyRate =  findMinValueGreatEqual0InArray(orderDateMinusEffDate)
-    const applicablePolicyRate =  ListPolicyRate[indexPolicyRate]
-    return applicablePolicyRate
+const findApplicablePolicy = async (listPolicy,orderDate)=>{
+    const orderDateMinusEffDate = await listPolicy.map(({ effectiveDate }) => (orderDate.getTime() - +effectiveDate.getTime()))
+    const indexPolicy =  findMinValueGreatEqual0InArray(orderDateMinusEffDate)
+    const applicablePolicy =  listPolicy[indexPolicy]
+    return applicablePolicy
 }
 
 const findWorkDayAfter = (date,listHoliday)=>{
@@ -29,6 +29,6 @@ const findWorkDayAfter = (date,listHoliday)=>{
 
 module.exports={
     findMinValueGreatEqual0InArray,
-    findApplicablePolicyRate,
+    findApplicablePolicy,
     findWorkDayAfter
 }

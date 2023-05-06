@@ -6,7 +6,7 @@ const HolidayService = require("../services/HolidayService")
 const PolicyRateService = require("../services/PolicyRateService");
 
 const _ = require("lodash");
-const { findApplicablePolicyRate, findWorkDayAfter } = require("../../utils/utils");
+const { findApplicablePolicy, findWorkDayAfter } = require("../../utils/utils");
 
 const LoginUserInfo = async (a) => {
     const user = await UserService.GetUserById(a)
@@ -58,7 +58,6 @@ const apiCreateContract = async (req, res) => {
 
         //khoi tao so hd moi
         const listcontract = await ContractService.getListContracts()
-        console.log("listcontract==>", listcontract)
         const PrefixOrderNo = (data) => data.orderNo.split("/")[0]
         const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1 | 1
         // const startOrderNo = 1
@@ -89,7 +88,7 @@ const apiCreateContract = async (req, res) => {
         }
 
         const ListPolicyRate = await PolicyRateService.getListPolicyRate()
-        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate, orderDate)
+        const applicablePolicyRate = await findApplicablePolicy(ListPolicyRate, orderDate)
         const applicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
 
         const term = req.body.term
@@ -148,8 +147,12 @@ const apiCreateContract = async (req, res) => {
             creater: username,
             approver: null
         }
-        const createContract = await ContractService.CreateOrder(newContract)
-        res.send(createContract)
+        const createContract = await ContractService.CreateOrderContract(newContract)
+        return res.status(200).send({
+            EC:0,
+            EM:"Tạo HĐ thành công",
+            DT: createContract
+        })
     }
     catch (err) {
         console.log(err + "")

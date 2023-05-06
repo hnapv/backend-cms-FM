@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
             }
             req.user = user
             // xác thực phân quyền ở đoạn này???
-            console.log("useracc",user)
+            // console.log("useracc",user)
             next()
         })
     }

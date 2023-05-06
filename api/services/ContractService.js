@@ -1,6 +1,6 @@
 const Contract = require("../models/ContractModel")
 
-const CreateOrder = async(Data)=>{
+const CreateOrderContract = async(Data)=>{
     const createData = await Contract.create(Data)
     return createData
 }
@@ -50,7 +50,7 @@ const contractAggregate = async(a)=>{
 }
 
 module.exports= {
-    CreateOrder,
+    CreateOrderContract,
     getContractDetailByOrderNo,
     putAContract,
     getListContracts,
