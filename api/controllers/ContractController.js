@@ -58,9 +58,9 @@ const apiCreateContract = async (req, res) => {
 
         //khoi tao so hd moi
         const listcontract = await ContractService.getListContracts()
-        console.log("listcontract==>",listcontract)
+        console.log("listcontract==>", listcontract)
         const PrefixOrderNo = (data) => data.orderNo.split("/")[0]
-        const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1
+        const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1 | 1
         // const startOrderNo = 1
         const lengthPrefixOrderNo = 6
         const orderNo = `${('0000000000').slice(0, lengthPrefixOrderNo - startOrderNo.toString().length) + startOrderNo.toString()}/${CurrentYear}/HTDT/ANHVP`
@@ -68,7 +68,7 @@ const apiCreateContract = async (req, res) => {
         //lay thong tin KH
         const customerId = req.body.customerId
         const listCustomer = await CustomerInfoService.GetDetailCusInfoByCustomerID(customerId)
-        console.log("check cusstomer id==>",customerId)
+        console.log("check cusstomer id==>", customerId)
         if (listCustomer === null) {
             return res.status(404).send("Customer ID khong ton tai")
         }
@@ -89,12 +89,14 @@ const apiCreateContract = async (req, res) => {
         }
 
         const ListPolicyRate = await PolicyRateService.getListPolicyRate()
-        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate,orderDate)
+        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate, orderDate)
         const applicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
 
         const term = req.body.term
         const convertApplicableRateTerm = applicableRateTerm.filter(a => a.term === term)
-
+        if(convertApplicableRateTerm.length==0){
+            return res.status(404).send("Không tìm được biểu lãi suất")
+        }
 
         const termMonth = Number(term.slice(0, term.length - 1))
         // const CurrentDate = new Date(`${CurrentYear}/${CurrentMonth}/${CurrentDay}`)
@@ -102,7 +104,7 @@ const apiCreateContract = async (req, res) => {
         let maturityDate = new Date(orderDate)
         maturityDate = new Date(maturityDate.setMonth(maturityDate.getMonth() + termMonth))
 
-        maturityDate = findWorkDayAfter(maturityDate,getListHoliday)
+        maturityDate = findWorkDayAfter(maturityDate, getListHoliday)
 
         // for (var i = 0; i < 10; i++) {
         //     for (var j = 0; j < getListHoliday.length; j++) {
@@ -149,9 +151,10 @@ const apiCreateContract = async (req, res) => {
         const createContract = await ContractService.CreateOrder(newContract)
         res.send(createContract)
     }
-    catch (err) { 
-        console.log(err+"")
-        return res.status(500).send(err.message) }
+    catch (err) {
+        console.log(err + "")
+        return res.status(500).send(err.message)
+    }
 }
 
 //approve HD

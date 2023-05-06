@@ -1,6 +1,6 @@
 const express = require("express");
 const { apiGetDetailCustomerByCustomerID, apiGetListCustomerInfo, apiCreateCustomerInfo, apiPutCustomerInfo } = require("../controllers/CustomerInfoController");
-const { verifyToken } = require("../controllers/UserController");
+const { verifyToken } = require("../controllers/AuthorizationController");
 
 const router = express.Router();
 
