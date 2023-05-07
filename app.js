@@ -12,6 +12,7 @@ const ContractRoute = require("./api/routes/ContractRoute")
 const UserRoute = require("./api/routes/UserRoute")
 const UpperLevelMgtRoute = require("./api/routes/UpperLevelMgtRoute")
 const HolidayRoute = require("./api/routes/HolidayRoute")
+const CusBankAccRoute = require("./api/routes/CusBankAccRoute")
 
 dotenv.config()
 var app = express();
@@ -40,6 +41,7 @@ app.use(UserRoute)
 app.use(CustomerInfoRoute)
 app.use(UpperLevelMgtRoute)
 app.use(HolidayRoute)
+app.use(CusBankAccRoute)
 
 
 mongoose.connect(process.env.MONGODB_URL, () => {

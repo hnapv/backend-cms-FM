@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { CHUA_DUYET, DA_DUYET } = require('../../config/params')
 const { findApplicablePolicyRate } = require('../../utils/utils')
 
 const PolicyRateService = require("../services/PolicyRateService")
@@ -32,11 +33,11 @@ const apiApprovePolicyRate = async (req, res) => {
     try {
         const filter = {
             _id: req.params.id,
-            status: "CHUA_DUYET"
+            status: CHUA_DUYET
         }
 
         const action = {
-            status: "DA_DUYET",
+            status: DA_DUYET,
             approver: "ADMIN"
         }
 
@@ -63,7 +64,7 @@ const apiCreatePolicyRate = async (req, res) => {
             policy: req.body.policy,
             policyName: req.body.policyName,
             effectiveDate: new Date(req.body.effectiveDate),
-            status: "CHUA_DUYET",
+            status: CHUA_DUYET,
             creator: "ADMIN",
             approver: "",
         }

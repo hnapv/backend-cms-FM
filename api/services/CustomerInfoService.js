@@ -1,7 +1,7 @@
 const CustomerInfomation = require ("../models/CustomerInfoModel")
 
-const GetListCustomerInfo = async()=>{
-    const listCustomer = await CustomerInfomation.find()
+const GetListCustomerInfo = async(data)=>{
+    const listCustomer = await CustomerInfomation.find(data)
     return listCustomer
 }
 

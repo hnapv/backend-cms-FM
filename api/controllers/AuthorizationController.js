@@ -97,7 +97,6 @@ const apiLoginUser = async (req, res) => {
     try {
         const username = req.body.username
         const user = await UserService.GetUserByUserName(username);
-        console.log("vào đây chưa==>")
         if (!user) {
             return res.status(200).send({
                 EC: -1,

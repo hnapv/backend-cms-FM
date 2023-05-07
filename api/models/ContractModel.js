@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 // ten, id, so tien, ky han, lai suat, loi tuc, tong thu nhap du kien, id nguoi tu van, ten nguoi tu van, so HD
 
 const ContractSchema = new Schema({
+  bankAcc_ObjId: { type: Schema.Types.ObjectId, ref: 'CusBankAcc' },
+  custody_ObjId: { type: Schema.Types.ObjectId, ref: 'User' },
   orderNo: String,
   customerName: String,
   customerId: String,
@@ -14,7 +16,11 @@ const ContractSchema = new Schema({
   interestRate: Number,
   profit: Number,
   grossIncome: Number,
-  custodyObjId: { type: Schema.Types.ObjectId, ref: 'User' },
+  bankAccountNumber: String,
+  bankAccountName: String,
+  bankCode: String,
+  bankShortName: String,
+  bankBranch: String,
   custodyId: String,
   custodyName: String,
   status: String,

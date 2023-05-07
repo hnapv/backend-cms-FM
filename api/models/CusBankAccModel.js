@@ -1,17 +1,18 @@
 var mongoose = require("mongoose");
 
 var Schema= mongoose.Schema;
-var CustomerBankAccountSchema= new Schema({
+var CusBankAccSchema= new Schema({
     customer_ObjId: { type: Schema.Types.ObjectId, ref: 'CustomerInfomation' },
-    accountName: String,
     accountNumber: String,
+    accountName: String,
     bankCode: String,
     bankShortName: String,
     bankName: String,
     bankBranch: String,
+    status:String
 
 }, {timestamps: true});
 
-var CustomerBankAccount = mongoose.model("CustomerBankAccount",CustomerBankAccountSchema);
+var CusBankAcc = mongoose.model("CusBankAcc",CusBankAccSchema);
 
-module.exports = CustomerBankAccount;
+module.exports = CusBankAcc;

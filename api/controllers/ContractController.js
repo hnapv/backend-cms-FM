@@ -7,6 +7,7 @@ const PolicyRateService = require("../services/PolicyRateService");
 
 const _ = require("lodash");
 const { findApplicablePolicy, findWorkDayAfter } = require("../../utils/utils");
+const { DA_DUYET, CHUA_DUYET } = require("../../config/params");
 
 const LoginUserInfo = async (a) => {
     const user = await UserService.GetUserById(a)
@@ -58,8 +59,11 @@ const apiCreateContract = async (req, res) => {
 
         //khoi tao so hd moi
         const listcontract = await ContractService.getListContracts()
-        const PrefixOrderNo = (data) => data.orderNo.split("/")[0]
-        const startOrderNo = Math.max(...listcontract.map(PrefixOrderNo)) + 1 | 1
+        let startOrderNo = Math.max(...listcontract.map((data) => data.orderNo.split("/")[0])) + 1 
+        if(startOrderNo<1){
+            startOrderNo =1
+        }
+        console.log("check số hđ",startOrderNo)
         // const startOrderNo = 1
         const lengthPrefixOrderNo = 6
         const orderNo = `${('0000000000').slice(0, lengthPrefixOrderNo - startOrderNo.toString().length) + startOrderNo.toString()}/${CurrentYear}/HTDT/ANHVP`
@@ -93,7 +97,7 @@ const apiCreateContract = async (req, res) => {
 
         const term = req.body.term
         const convertApplicableRateTerm = applicableRateTerm.filter(a => a.term === term)
-        if(convertApplicableRateTerm.length==0){
+        if (convertApplicableRateTerm.length == 0) {
             return res.status(404).send("Không tìm được biểu lãi suất")
         }
 
@@ -130,6 +134,8 @@ const apiCreateContract = async (req, res) => {
         const { username, _id, userid, fullname } = creater
 
         const newContract = {
+            custody_ObjId: _id,
+            bankAcc_ObjId: req.body.bankAcc_ObjId,
             orderNo: orderNo,
             customerName: listCustomer.customerName,
             customerId: req.body.customerId,
@@ -140,17 +146,21 @@ const apiCreateContract = async (req, res) => {
             interestRate: convertApplicableRateTerm[0].rate,
             profit: profit,
             grossIncome: grossIncome,
-            custodyObjId: _id,
             custodyId: userid,
             custodyName: fullname,
-            status: "CHUA_DUYET",
+            status: CHUA_DUYET,
             creater: username,
-            approver: null
+            approver: null,
+            bankAccountNumber: req.body.bankAccountNumber,
+            bankAccountName: req.body.bankAccountName,
+            bankCode: req.body.bankCode,
+            bankShortName: req.body.bankShortName,
+            bankBranch: req.body.bankBranch,
         }
         const createContract = await ContractService.CreateOrderContract(newContract)
         return res.status(200).send({
-            EC:0,
-            EM:"Tạo HĐ thành công",
+            EC: 0,
+            EM: "Tạo HĐ thành công",
             DT: createContract
         })
     }
@@ -171,11 +181,11 @@ const apiApproveContract = async (req, res) => {
 
     const filter = {
         orderNo: req.body.orderNo,
-        status: "CHUA_DUYET"
+        status: CHUA_DUYET
     }
 
     const approve = {
-        status: "DA_DUYET",
+        status: DA_DUYET,
         approver: username
     }
 
@@ -208,7 +218,7 @@ const apigetContractFilter = async (req, res) => {
         custodyId: {
             $in: [/^12/, "d"]
         },
-        status: "DA_DUYET"
+        status: DA_DUYET
     }
     const getcontract = await ContractService.getContractFilter(filter)
     console.log(getcontract)
