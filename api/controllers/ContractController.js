@@ -47,6 +47,21 @@ const apiGetContractPaginate = async (req, res) => {
     }
 }
 
+const apiGetMaturityDate = async (req,res)=>{
+    const getListHoliday = await HolidayService.GetListHolidayDate({ active: true })
+
+    const termMonth = Number(req.query.term.slice(0, req.query.term.length - 1))
+    let maturityDate = new Date(req.query.orderDate)
+    maturityDate = new Date(maturityDate.setMonth(maturityDate.getMonth() + termMonth))
+    maturityDate = findWorkDayAfter(maturityDate, getListHoliday)
+
+    return res.status(200).send({
+        EC:0,
+        EM: "Get success",
+        DT: maturityDate
+    })
+}
+
 
 //tao HĐ đầu tư
 const apiCreateContract = async (req, res) => {
@@ -79,7 +94,8 @@ const apiCreateContract = async (req, res) => {
         //lay thong tin ky han & lãi suất
 
         const orderDate = new Date(req.body.orderDate)
-
+        console.log("check",orderDate.toLocaleDateString('vi-VN')) //check tiếp
+        
         if (orderDate.getDay() == 0 | orderDate.getDay() == 6) {
             return res.status(500).send("Ngày đầu tư là ngày cuối tuần")
         }
@@ -108,16 +124,6 @@ const apiCreateContract = async (req, res) => {
         maturityDate = new Date(maturityDate.setMonth(maturityDate.getMonth() + termMonth))
 
         maturityDate = findWorkDayAfter(maturityDate, getListHoliday)
-
-        // for (var i = 0; i < 10; i++) {
-        //     for (var j = 0; j < getListHoliday.length; j++) {
-        //         if (maturityDate.getDay() == 0 | maturityDate.getDay() == 6 | maturityDate.getTime() == getListHoliday[j].DateHoliday.getTime()) {
-
-        //             maturityDate = new Date(maturityDate.setDate(maturityDate.getDate() + 1))
-        //         }
-        //     }
-        // }
-
 
         //tinh tien nhan
         const investmentPrincipal = req.body.investmentPrincipal
@@ -268,6 +274,7 @@ const apigetContractAggregate = async (req, res) => {
 
 module.exports = {
     apiCreateContract,
+    apiGetMaturityDate,
     apiApproveContract,
     apigetContractDetailByOrderNo,
     apigetContractbyCustomerID,

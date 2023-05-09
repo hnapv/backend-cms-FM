@@ -18,7 +18,8 @@ const apiGetDetailCustomerByCustomerID =async(req,res)=> {
         }
         res.status(200).send({
             EC:0,
-            EM:data
+            EM: "Get success",
+            DT: data
         })
     } catch (err) {
         console.log(err + "")

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { CHUA_DUYET, DA_DUYET } = require('../../config/params')
-const { findApplicablePolicyRate } = require('../../utils/utils')
+const { findApplicablePolicy } = require('../../utils/utils')
 
 const PolicyRateService = require("../services/PolicyRateService")
 
@@ -84,9 +84,11 @@ const apiCreatePolicyRate = async (req, res) => {
 
 const apiGetApplicablePolicyRate = async (req, res) => {
     try {
-        const OrderDate = new Date(req.body.OrderDate)
+        const orderDate = new Date(req.body.orderDate)
+    console.log("orderDate==>",orderDate)
+
         const ListPolicyRate = await PolicyRateService.getListPolicyRate()
-        const applicablePolicyRate = await findApplicablePolicyRate(ListPolicyRate, OrderDate)
+        const applicablePolicyRate = await findApplicablePolicy(ListPolicyRate, orderDate)
         const rawApplicableRateTerm = await PolicyRateService.getRateTermByPolicyRateId({ policyRateObjId: applicablePolicyRate._id })
         const applicableRateTerm = rawApplicableRateTerm.map(({term,rate})=>({term,rate}))
         console.log("req.body==>",req.body)
